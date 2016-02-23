@@ -6,28 +6,16 @@ contract StackExchangeBountyAddress {
     uint id_q;
     uint id_n;
     string site;
-    address[] sponsors;
-    mapping (address=>uint) sponsorsBalance;
 
-    modifier add_sponsors(){
-        _
-        if(msg.value==0) return;
-            if(sponsorsBalance[tx.origin]==0){
-                sponsors[sponsors.length++] = tx.origin;
-            }
-            // add to bounty
-            sponsorsBalance[tx.origin] += msg.value;
-    }
-
-    function StackExchangeBountyAddress(uint _id_q,string _site, uint _id_n) add_sponsors {
+    function StackExchangeBountyAddress(uint _id_q,string _site, uint _id_n) {
         main = msg.sender;
         id_q = _id_q;
         site = _site;
         id_n = _id_n;
     }
 
-    function() add_sponsors {
-        if(msg.value==0) throw;
+    function() {
+        if(msg.value==0 || id_q==0 || bytes(site).length==0 || main==0) throw;
         StackExchangeBounty c = StackExchangeBounty(main);
         c.depositQuestion.value(msg.value)(id_q,site);
     }
@@ -85,13 +73,19 @@ contract StackExchangeBounty is usingOraclize {
         if(_id==0 || bytes(_site).length==0) throw;
         if(msg.value == 0) throw;
         if((questions[id_n].id_q!=_id && sha3(questions[id_n].site)!=sha3(_site)) || questions[id_n].owner_accepted_question!=0) throw;
-        
+
+        address origin_addr = msg.sender;
+
+        if(msg.sender==questions[id_n].contract_address){
+            origin_addr = tx.origin;
+        }
+
         // add user
-        if(questions[id_n].sponsorsBalance[msg.sender]==0){
-            questions[id_n].sponsors[questions[id_n].sponsors.length++] = msg.sender;
+        if(questions[id_n].sponsorsBalance[origin_addr]==0){
+            questions[id_n].sponsors[questions[id_n].sponsors.length++] = origin_addr;
         }
         // add to bounty
-        questions[id_n].sponsorsBalance[msg.sender] += msg.value;
+        questions[id_n].sponsorsBalance[origin_addr] += msg.value;
         
     }
     
