@@ -118,7 +118,13 @@ contract StackExchangeBounty is usingOraclize {
         questions[id_n].myidstatus[myid] = 4;
     }
     
+    function getSponsors(uint _id_n) constant returns (address[] s_list){
+        return questions[_id_n].sponsors;
+    }
     
+    function getSponsorsBalance(uint _id_n, address _sponsor_addr) constant returns (uint s_balance){
+        return questions[_id_n].sponsorsBalance[_sponsor_addr];
+    }
 
     function __callback(bytes32 myid, string result) {
         if (msg.sender != oraclize_cbAddress()) throw;
@@ -128,7 +134,6 @@ contract StackExchangeBounty is usingOraclize {
             if(bytes(result).length==0){
                 // question id or site not valid (question deleted/moved, id or site wrong)
 
-                questions[id_n].owner_accepted_question = 0x0000000000000000000000000000000000000000;
                 if(questions[id_n].sponsors.length>1){
                     uint fee = (questions[id_n].fee/questions[id_n].sponsors.length);
                     for (uint i=0; i<id_n; i++){
