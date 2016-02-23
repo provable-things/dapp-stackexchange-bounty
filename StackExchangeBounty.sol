@@ -93,7 +93,7 @@ contract StackExchangeBounty is usingOraclize {
         if(_id==0 || bytes(_site).length==0) throw;
         if(msg.value == 0) throw;
         for (uint i=1; i<=id_n; i++){
-            if(questions[i].owner_accepted_question!=0) throw;
+            if(questions[i].owner_accepted_question!=0 && questions[i].id_q !=_id && sha3(questions[i].site)!=sha3(_site)) throw;
             if(questions[i].id_q==_id && sha3(questions[i].site)==sha3(_site)){
                 addToBounty(_id,_site,i);
                 return;
