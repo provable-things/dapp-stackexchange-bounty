@@ -93,7 +93,7 @@ contract StackExchangeBounty is usingOraclize {
         if(_id==0 || bytes(_site).length==0) throw;
         if(msg.value == 0) throw;
         for (uint i=1; i<=id_n; i++){
-            if(questions[i].owner_accepted_question!=0 && questions[i].id_q ==_id && sha3(questions[i].site)==sha3(_site)) throw;
+            if(questions[i].owner_accepted_question!=0 && questions[i].id_q ==_id && sha3(questions[i].site)==sha3(_site) || questions[i].expiry<now) throw;
             if(questions[i].id_q==_id && sha3(questions[i].site)==sha3(_site)){
                 addToBounty(_id,_site,i);
                 return;
@@ -165,9 +165,9 @@ contract StackExchangeBounty is usingOraclize {
                 sendBounty(questions[id_n].id_q,questions[id_n].site,id_n);
             }
         } else if(questions[id_n].myidstatus[myid]==3){
-            if(bytes(result).length==0){
+            if(bytes(result).length==0 || bytes(result).length!=42){
                 sendBounty(questions[id_n].id_q,questions[id_n].site,id_n);
-            } else if(bytes(result).length>0){
+            } else if(bytes(result).length>0 && bytes(result).length==42){
                 questions[id_n].owner_accepted_question = parseAddr(result);
                 sendBounty(questions[id_n].id_q,questions[id_n].site,id_n);
             }            
