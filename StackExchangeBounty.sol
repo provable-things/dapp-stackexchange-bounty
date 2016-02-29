@@ -126,6 +126,14 @@ contract StackExchangeBounty is usingOraclize {
         return questions[_id_n].sponsorsBalance[_sponsor_addr];
     }
 
+    function getAddressQuestion(uint _id_q, string _site) constant returns(address q_addr){
+        for (uint i=1; i<=id_n; i++){
+            if(questions[i].id_q==_id_q && sha3(questions[i].site)==sha3(_site)){
+                return questions[i].contract_address;
+            }
+        }
+    }
+
     function __callback(bytes32 myid, string result) {
         if (msg.sender != oraclize_cbAddress()) throw;
 
