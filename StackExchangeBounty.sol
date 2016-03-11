@@ -3,232 +3,218 @@ import "dev.oraclize.it/api.sol";
 
 contract StackExchangeBountyAddress {
     address main;
-    uint id_q;
-    uint id_n;
+    uint questionID;
+    uint i;
     string site;
 
-    function StackExchangeBountyAddress(uint _id_q,string _site, uint _id_n) {
+    function StackExchangeBountyAddress(uint _questionID, string _site, uint _i) {
         main = msg.sender;
-        id_q = _id_q;
+        questionID = _questionID;
         site = _site;
-        id_n = _id_n;
+        i = _i;
     }
 
     function() {
-        if(msg.value==0 || id_q==0 || bytes(site).length==0 || main==0) throw;
+        if (msg.value == 0 || questionID == 0 || bytes(site).length == 0 || main == 0)
+            throw;
         StackExchangeBounty c = StackExchangeBounty(main);
-        c.depositQuestion.value(msg.value)(id_q,site);
+        c.handleQuestion.value(msg.value)(questionID, site);
     }
 
 }
 
 
 contract StackExchangeBounty is usingOraclize {
-    
+
     // solo per debug
     address owner;
-    
-    
+    // Statuses:
+    //  - exist or not
+    //  - answered or not
+    //  - answer accepted or not
+    // - winnerHasAddress or not
+
+    enum status {answered, not_answered};
+
     struct question {
-        address[] sponsors;
-        mapping (address=>uint) sponsorsBalance;
-        address contract_address;
-        address owner_accepted_question;
-        uint user_id_accepted_answer;
-        uint id_q;
-        string site;
-        uint accepted_answer;
-        uint delay;
-        uint expiry;
-        uint fee;
-        mapping (bytes32=>uint) myidstatus;
+        address[] public sponsors;
+        mapping (address=>uint) public sponsorsBalance;
+        address contractAddress;
+        address winnerAddress;
+        uint winnerID;
+        uint acceptedAnswer;
+        bool isAnswerAccepted;
+        uint updateDelay;
+        uint expiryDate;
+        uint ownedFee;
+        mapping (bytes32 => status) private qStatus;
     }
 
-    //^^ myidstatus ^^
-    // 1 == check only
-    // 2 == user info
-    // 3 == user location
-    // 4 == check if the question exist
-    
-    mapping(uint => question) public questions;
-    
-    mapping (bytes32 => uint) my_id;
+    struct site {
+            mapping (uint => question) public questions;
+    }
 
-    uint id_n;
+
+    event acceptedAnswer(uint _ID);
+
+
+    mapping(byte32 => site) public sites;
+
+    mapping (bytes32 => uint) myID;
+
+    uint i;
 
     uint contractBalance;
 
     function StackExchangeBounty() {
-        
+
         // **************** SET NETWORK *************************
         oraclize_setNetwork(networkID_consensys);
         // **************** SET NETWORK *************************
-        
+
         // solo per debug
         owner = msg.sender;
     }
 
- 
-    function addToBounty(uint _id, string _site, uint id_n) internal{
-        if(_id==0 || bytes(_site).length==0) throw;
-        if(msg.value == 0) throw;
-        if((questions[id_n].id_q!=_id && sha3(questions[id_n].site)!=sha3(_site)) || questions[id_n].owner_accepted_question!=0) throw;
 
-        address origin_addr = msg.sender;
+    function increaseBounty(uint _ID, string _site, uint i) internal {
+        if (_ID == 0 || bytes(_site).length == 0 || msg.value == 0) throw;
+        if ((questions[i].questionID != _ID && sha3(questions[i].site) != sha3(_site)) || questions[i].ownerAcceptedQuestion != 0)
+            throw;
 
-        if(msg.sender==questions[id_n].contract_address){
-            origin_addr = tx.origin;
+        address originAddress = msg.sender;
+
+        if(msg.sender == questions[i].contractAddress){
+            originAddress = tx.origin;
         }
 
-        // add user
-        if(questions[id_n].sponsorsBalance[origin_addr]==0){
-            questions[id_n].sponsors[questions[id_n].sponsors.length++] = origin_addr;
-        }
-        // add to bounty
-        questions[id_n].sponsorsBalance[origin_addr] += msg.value;
-        
+        // Add new sponsor
+        if(questions[i].sponsorsBalance[originAddress] == 0)
+            questions[i].sponsors[questions[i].sponsors.length++] = originAddress;
+        // Increase bounty
+        questions[i].sponsorsBalance[originAddress] += msg.value;
+
     }
-    
-    function depositQuestion(uint _id, string _site){
-        if(_id==0 || bytes(_site).length==0) throw;
-        if(msg.value == 0) throw;
-        for (uint i=1; i<=id_n; i++){
-            if(questions[i].owner_accepted_question!=0 && questions[i].id_q ==_id && sha3(questions[i].site)==sha3(_site) || questions[i].expiry<now) throw;
-            if(questions[i].id_q==_id && sha3(questions[i].site)==sha3(_site)){
-                addToBounty(_id,_site,i);
+
+    function handleQuestion(uint _ID, string _site) {
+        if(_ID == 0 || bytes(_site).length == 0 || msg.value == 0) throw;
+        // If site exist
+        if (sites[_sites].questions[_ID] != 0) {
+            for (uint i = 0; i <= sites[_sites].questions.length; i++) {
+                if(questions[i].ownerAcceptedQuestion!=0 && questions[i].questionID ==_ID && sha3(questions[i].site) == sha3(_site) || questions[i].expiry < now) throw;
+                if( sites[_site].questions[qID] == _ID && sha3(questions[i].site) == sha3(_site)) {
+                increaseBounty(_ID, _site, i);
                 return;
             }
         }
+        else {
+            // defaut da cambiare
+            sites[_sites].questions[_ID].expiry = now + week;
+            sites[_sites].questions[_ID].delay = DEFAULT_DELAY;
 
-        id_n++;
-        questions[id_n].id_q = _id;
-        questions[id_n].site = _site;
-                     
-        // defaut da cambiare 
-        questions[id_n].expiry = now+week;
-        questions[id_n].delay = 600;
-                        
-        addToBounty(_id,_site,id_n);
+            increaseBounty(_ID,_site, i);
 
-        string memory url = strConcat("https://api.stackexchange.com/2.2/questions/",uint2str(_id),"?site=",_site);
-        contractBalance = this.balance;
-        bytes32 myid = oraclize_query("URL", strConcat("json(",url,").items.0.creation_date"),1000000);
-        questions[id_n].fee += (contractBalance - this.balance);
-        my_id[myid] = id_n;
-        questions[id_n].myidstatus[myid] = 4;
-    }
-    
-    function getSponsors(uint _id_n) constant returns (address[] s_list){
-        return questions[_id_n].sponsors;
-    }
-    
-    function getSponsorsBalance(uint _id_n, address _sponsor_addr) constant returns (uint s_balance){
-        return questions[_id_n].sponsorsBalance[_sponsor_addr];
+            string memory URL = strConcat("https://api.stackexchange.com/2.2/questions/",uint2str(_ID),"?site=",_site);
+            contractBalance = this.balance;
+            bytes32 date = oraclize_query("URL", strConcat("json(", URL,").items.0.creation_date"),1000000);
+            sites[_sites].questions[_ID].fee += (contractBalance - this.balance);
+        }
     }
 
-    function getAddressQuestion(uint _id_q, string _site) constant returns(address q_addr){
-        for (uint i=1; i<=id_n; i++){
-            if(questions[i].id_q==_id_q && sha3(questions[i].site)==sha3(_site)){
-                return questions[i].contract_address;
+     function getAddressQuestion(uint _questionID, string _site) constant returns (address qAddr){
+        for (uint i = 1; i <= questions.length; i++){
+            if(questions[i].questionID == _questionID && sha3(questions[i].site)==sha3(_site)){
+                return questions[i].contractAddress;
             }
         }
     }
 
-    function __callback(bytes32 myid, string result) {
+    function __callback(bytes32 myID, string result) {
         if (msg.sender != oraclize_cbAddress()) throw;
 
-        uint id_n = my_id[myid];
-        if(questions[id_n].myidstatus[myid]==4){
+        uint i = myID[myID];
+        if(questions[i].myIDStatus[myID]==4) {
             if(bytes(result).length==0){
                 // question id or site not valid (question deleted/moved, id or site wrong)
-
-                if(questions[id_n].sponsors.length>1){
-                    uint fee = (questions[id_n].fee/questions[id_n].sponsors.length);
-                    for (uint i=0; i<id_n; i++){
-                        questions[id_n].sponsors[i].send(questions[id_n].sponsorsBalance[questions[id_n].sponsors[i]]-fee);
-                    }
-                }
-                else {
-                    questions[id_n].sponsors[0].send(questions[id_n].sponsorsBalance[questions[id_n].sponsors[0]]-questions[id_n].fee);
-                }
-                return;
-            } else if(parseInt(result)>0){
-                questions[id_n].contract_address = new StackExchangeBountyAddress(questions[id_n].id_q,questions[id_n].site,id_n);
-                check(questions[id_n].delay,questions[id_n].id_q,questions[id_n].site,id_n);
+                //Return balances minus fees to all sponsors
+            else if(parseInt(result)>0){
+                //If the site exists
+                //
+                questions[i].contractAddress = new StackExchangeBountyAddress(questions[i].questionID,questions[i].site,i);
+                check(questions[i].delay,questions[i].questionID,questions[i].site,i);
             }
-        } else if(questions[id_n].myidstatus[myid]==1){
+        } else if(questions[i].myIDStatus[myID]==1){
             if(bytes(result).length==0){
-                // no accepted answer
-                check(questions[id_n].delay,questions[id_n].id_q,questions[id_n].site,id_n);
+                //There are no accepted answer
             } else if(parseInt(result)>0){
-                // accepted answer
-                questions[id_n].accepted_answer = parseInt(result);
-                sendBounty(questions[id_n].id_q,questions[id_n].site,id_n);
+                // There is an accepted answer, resolve contract by sending bounty
             }
-        } else if(questions[id_n].myidstatus[myid]==2){
+        } else if(questions[i].myIDStatus[myID]==2){
             if(bytes(result).length==0){
-                sendBounty(questions[id_n].id_q,questions[id_n].site,id_n);
+                sendBounty(questions[i].questionID,questions[i].site,i);
             } else if(parseInt(result)>0){
-                questions[id_n].user_id_accepted_answer = parseInt(result);
-                sendBounty(questions[id_n].id_q,questions[id_n].site,id_n);
+                questions[i].userIDAcceptedAnswer = parseInt(result);
+                sendBounty(questions[i].questionID,questions[i].site,i);
             }
-        } else if(questions[id_n].myidstatus[myid]==3){
+        } else if(questions[i].myIDStatus[myID]==3){
             if(bytes(result).length==0 || bytes(result).length!=42){
-                sendBounty(questions[id_n].id_q,questions[id_n].site,id_n);
+                sendBounty(questions[i].questionID,questions[i].site,i);
             } else if(bytes(result).length>0 && bytes(result).length==42){
-                questions[id_n].owner_accepted_question = parseAddr(result);
-                sendBounty(questions[id_n].id_q,questions[id_n].site,id_n);
-            }            
+                questions[i].ownerAcceptedQuestion = parseAddr(result);
+                sendBounty(questions[i].questionID,questions[i].site,i);
+            }
         }
-        delete questions[id_n].myidstatus[myid];
-        delete my_id[myid];
+        // delete unneeded answer
     }
-    
-    function sendBounty(uint id, string site, uint id_n) internal {
-        if(id==0 || bytes(site).length==0 || (sha3(questions[id_n].id_q)!=sha3(id) && sha3(questions[id_n].site)!=sha3(site)) ) throw;
-        if(questions[id_n].accepted_answer==0) return;
-        if(questions[id_n].expiry>now){
-            
-            if(questions[id_n].user_id_accepted_answer==0){
+
+    function sendBounty(uint id, string site, uint i) internal {
+        if(id==0 || bytes(site).length==0 || (sha3(questions[i].questionID)!=sha3(id) && sha3(questions[i].site)!=sha3(site)) ) throw;
+        if(questions[i].acceptedAnswer==0) return;
+        if(questions[i].expiry>now){
+
+            if(questions[i].userIDAcceptedAnswer==0){
                 contractBalance = this.balance;
-                bytes32 myid = oraclize_query(questions[id_n].delay, "URL",strConcat("json(https://api.stackexchange.com/2.2/answers/",uint2str(questions[id_n].accepted_answer),"?site=",site,").items.0.owner.user_id"));
-                questions[id_n].fee += (contractBalance - this.balance);
-                my_id[myid] = id_n;
-                questions[id_n].myidstatus[myid] = 2;
+                bytes32 myID = oraclize_query(questions[i].delay, "URL",strConcat("json(https://api.stackexchange.com/2.2/answers/",uint2str(questions[i].acceptedAnswer),"?site=",site,").items.0.owner.user_ID"));
+                questions[i].fee += (contractBalance - this.balance);
+                myID[myID] = i;
+                questions[i].myIDStatus[myID] = 2;
+                //
             }
-            else if(questions[id_n].owner_accepted_question==0 && questions[id_n].user_id_accepted_answer>0){
+            else if (questions[i].ownerAcceptedQuestion==0 && questions[i].userIDAcceptedAnswer>0){
                 contractBalance = this.balance;
-                myid = oraclize_query(questions[id_n].delay, "URL",strConcat("json(https://api.stackexchange.com/2.2/users/",uint2str(questions[id_n].user_id_accepted_answer),"?site=",site,").items.0.location"));
-                questions[id_n].fee += (contractBalance - this.balance);
-                my_id[myid] = id_n;
-                questions[id_n].myidstatus[myid] = 3;
+                result = oraclize_query(questions[i].delay, "URL",strConcat("json(https://api.stackexchange.com/2.2/users/",uint2str(questions[i].userIDAcceptedAnswer),"?site=",site,").items.0.location"));
+                questions[i].fee += (contractBalance - this.balance);
+                myID[myID] = i;
+                questions[_ID].status = {};
+                //
             }
-            else if(questions[id_n].owner_accepted_question>0 && questions[id_n].user_id_accepted_answer>0){
+            else if(questions[i].ownerAcceptedQuestion>0 && questions[i].userIDAcceptedAnswer>0){
                 uint bounty_amount;
-                for (uint z=0; z<questions[id_n].sponsors.length; z++){
-                    bounty_amount += questions[id_n].sponsorsBalance[questions[id_n].sponsors[z]];
+                for (uint z=0; z<questions[i].sponsors.length; z++){
+                    bounty_amount += questions[i].sponsorsBalance[questions[i].sponsors[z]];
                 }
-                questions[id_n].owner_accepted_question.send(bounty_amount - questions[id_n].fee);
+                questions[i].ownerAcceptedQuestion.send(bounty_amount - questions[i].fee);
             }
 
-        } else {
-            // question expired
+        }
+        else {
+            // All else fails, question is resolved
             address _sponsor;
-            uint fee = (questions[id_n].fee/questions[id_n].sponsors.length);
-            for (uint i=0; i<questions[id_n].sponsors.length; i++){
-                _sponsor = questions[id_n].sponsors[i];
-                _sponsor.send(questions[id_n].sponsorsBalance[_sponsor]-fee);
+            uint fee = (questions[i].fee/questions[i].sponsors.length);
+            for (uint i=0; i<questions[i].sponsors.length; i++){
+                _sponsor = questions[i].sponsors[i];
+                _sponsor.send(questions[i].sponsorsBalance[_sponsor]-fee);
             }
         }
     }
-    
-    function check(uint delay, uint id, string site, uint id_n) internal{
+
+    function queryOraclize(uint delay, uint id, string site, uint i) internal {
         string memory url = strConcat("https://api.stackexchange.com/2.2/questions/",uint2str(id),"?site=",site);
         contractBalance = this.balance;
-        bytes32 myid = oraclize_query(delay, "URL", strConcat("json(",url,").items.0.accepted_answer_id"));
-        questions[id_n].fee += (contractBalance - this.balance);
-        my_id[myid] = id_n;
-        questions[id_n].myidstatus[myid] = 1;
+        bytes32 result = oraclize_query(delay, "URL", strConcat("json(",url,").items.0.accepted_answer_id"));
+        questions[i].fee += (contractBalance - this.balance);
+        qNumber[result] = i;
+        questions[i].isAnswerAccepted = true;
 
     }
 
@@ -237,7 +223,7 @@ contract StackExchangeBounty is usingOraclize {
     function kill(){
         if (msg.sender == owner) suicide(msg.sender);
     }
-    
+
     function uint2str(uint i) returns (string){
         uint j = i;
         uint len;
