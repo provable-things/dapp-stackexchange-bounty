@@ -7,7 +7,7 @@ contract StackExchangeBountyAddress {
     uint i;
     string site;
 
-    function StackExchangeBountyAddress(uint _questionID, string _site, uint _i) {
+    function StackExchangeBountyAddress(uint _questionID, string _site) {
         main = msg.sender;
         questionID = _questionID;
         site = _site;
@@ -28,30 +28,32 @@ contract StackExchangeBounty is usingOraclize {
 
     // solo per debug
     address owner;
+    enum QueryType {Check, Info, Location, Exist}
 
     struct question {
         address[] public sponsors;
-        mapping (address=>uint) public sponsorsBalance;
+        mapping (address => uint) public sponsorsBalance;
         address contractAddress;
-        address ownerAcceptedQuestion;
-        uint questionID;
+        address winnerAddress;
+        uint winnerID;
         uint acceptedAnswerID;
-        bool isAnswerAccepted;
-        uint delay;
-        uint expiry;
-        uint paidFee;
+        uint updateDelay;
+        uint expiryDate;
+        uint ownedFee;
+        mapping (byte32 => QueryType) queryType;
     }
 
     struct site {
             mapping(uint => question) public questions;
     }
 
+    struct QueryInfo {
+      string site;
+      uint questionID;
+    }
 
-    event acceptedAnswer(uint _ID);
-
-
+    mapping(byte32 => QueryInfo) queryInfo;
     mapping(byte32 => site) public sites;
-    uint i;
     uint contractBalance;
 
     function StackExchangeBounty() {
@@ -65,35 +67,57 @@ contract StackExchangeBounty is usingOraclize {
     }
 
 
-    function increaseBounty(uint _ID, string _site, uint i) internal {
+    function increaseBounty(uint _questionID, string _site, uint i) internal {
 
 
     }
 
-    function handleQuestion(uint _ID, string _site) {
+    function handleQuestion(uint _questionID, string _site) {
 
-        if
     }
 
 
-    function __callback(bytes32 myID, string result) {
+    function __callback(bytes32 queryID, string result) {
         if (msg.sender != oraclize_cbAddress()) throw;
+        _site =  LastQueryInfos[queryID].site;
+        _questionID =  LastQueryInfos[queryID].questionID;
 
+        if(sites[_site].questions[_questionID].queryType[queryID] == QueryType.Exist) {
+
+        }
+        else if(sites[_site].questions[_questionID].queryType[queryID] == QueryType.Check) {
+
+        }
+        else if(sites[_site].questions[_questionID].queryType[queryID] == QueryType.Info) {
+
+        }
+        else if(sites[_site].questions[_questionID].queryType[queryID] == QueryType.Location) {
+
+        }
 
     }
 
-    function cashOut(uint id, string site, uint i) internal {
+    function sendBounty(uint  _questionID, string _site) internal {
 
     }
 
-    function queryOraclize(uint delay, uint id, string site, uint i) internal {
-        string memory url = strConcat("https://api.stackexchange.com/2.2/questions/",uint2str(id),"?site=",site);
+
+    function queryOraclize(uint _updateDelay, uint _questionID, string _site) internal {
+        string memory URL = strConcat(
+            "https://api.stackexchange.com/2.2/questions/", uint2str(_questionID),
+            "?site=",
+            _site
+          );
         contractBalance = this.balance;
-        bytes32 myID = oraclize_query(delay, "URL", strConcat("json(",url,").items.0.accepted_answer_id"));
-        questions[i].fee += (contractBalance - this.balance);
-        myID[myID] = i;
-        questions[i].isAnswerAccepted = true;
-
+        bytes32 queryID = oraclize_query(
+            _updateDelay,
+            URL,
+            strConcat("json(",URL,").items.0.accepted_answer_questionID")
+          );
+        sites[_site].questions[_questionID].ownedFee += (contractBalance - this.balance);
+        sites[_site].questions[_questionID].queryType[queryID] = QueryType.Check;
+        queryInfo[queryID].site = _site;
+        queryInfo[queryID].questionID = _questionID;
     }
 
 

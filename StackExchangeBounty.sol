@@ -60,7 +60,7 @@ contract StackExchangeBounty is usingOraclize {
 
     mapping(byte32 => site) public sites;
 
-    mapping (bytes32 => uint) myID;
+    mapping (bytes32 => uint) queryID;
 
     uint i;
 
@@ -129,11 +129,11 @@ contract StackExchangeBounty is usingOraclize {
         }
     }
 
-    function __callback(bytes32 myID, string result) {
+    function __callback(bytes32 queryID, string result) {
         if (msg.sender != oraclize_cbAddress()) throw;
 
-        uint i = myID[myID];
-        if(questions[i].myIDStatus[myID]==4) {
+        uint i = queryID[queryID];
+        if(questions[i].queryIDStatus[queryID]==4) {
             if(bytes(result).length==0){
                 // question id or site not valid (question deleted/moved, id or site wrong)
                 //Return balances minus fees to all sponsors
@@ -143,20 +143,20 @@ contract StackExchangeBounty is usingOraclize {
                 questions[i].contractAddress = new StackExchangeBountyAddress(questions[i].questionID,questions[i].site,i);
                 check(questions[i].delay,questions[i].questionID,questions[i].site,i);
             }
-        } else if(questions[i].myIDStatus[myID]==1){
+        } else if(questions[i].queryIDStatus[queryID]==1){
             if(bytes(result).length==0){
                 //There are no accepted answer
             } else if(parseInt(result)>0){
                 // There is an accepted answer, resolve contract by sending bounty
             }
-        } else if(questions[i].myIDStatus[myID]==2){
+        } else if(questions[i].queryIDStatus[queryID]==2){
             if(bytes(result).length==0){
                 sendBounty(questions[i].questionID,questions[i].site,i);
             } else if(parseInt(result)>0){
                 questions[i].userIDAcceptedAnswer = parseInt(result);
                 sendBounty(questions[i].questionID,questions[i].site,i);
             }
-        } else if(questions[i].myIDStatus[myID]==3){
+        } else if(questions[i].queryIDStatus[queryID]==3){
             if(bytes(result).length==0 || bytes(result).length!=42){
                 sendBounty(questions[i].questionID,questions[i].site,i);
             } else if(bytes(result).length>0 && bytes(result).length==42){
@@ -174,17 +174,17 @@ contract StackExchangeBounty is usingOraclize {
 
             if(questions[i].userIDAcceptedAnswer==0){
                 contractBalance = this.balance;
-                bytes32 myID = oraclize_query(questions[i].delay, "URL",strConcat("json(https://api.stackexchange.com/2.2/answers/",uint2str(questions[i].acceptedAnswer),"?site=",site,").items.0.owner.user_ID"));
+                bytes32 queryID = oraclize_query(questions[i].delay, "URL",strConcat("json(https://api.stackexchange.com/2.2/answers/",uint2str(questions[i].acceptedAnswer),"?site=",site,").items.0.owner.user_ID"));
                 questions[i].fee += (contractBalance - this.balance);
-                myID[myID] = i;
-                questions[i].myIDStatus[myID] = 2;
+                queryID[queryID] = i;
+                questions[i].queryIDStatus[queryID] = 2;
                 //
             }
             else if (questions[i].ownerAcceptedQuestion==0 && questions[i].userIDAcceptedAnswer>0){
                 contractBalance = this.balance;
                 result = oraclize_query(questions[i].delay, "URL",strConcat("json(https://api.stackexchange.com/2.2/users/",uint2str(questions[i].userIDAcceptedAnswer),"?site=",site,").items.0.location"));
                 questions[i].fee += (contractBalance - this.balance);
-                myID[myID] = i;
+                queryID[queryID] = i;
                 questions[_ID].status = {};
                 //
             }
@@ -211,7 +211,7 @@ contract StackExchangeBounty is usingOraclize {
     function queryOraclize(uint delay, uint id, string site, uint i) internal {
         string memory url = strConcat("https://api.stackexchange.com/2.2/questions/",uint2str(id),"?site=",site);
         contractBalance = this.balance;
-        bytes32 result = oraclize_query(delay, "URL", strConcat("json(",url,").items.0.accepted_answer_id"));
+        bytes32 queryID = oraclize_query(delay, "URL", strConcat("json(",url,").items.0.accepted_answer_id"));
         questions[i].fee += (contractBalance - this.balance);
         qNumber[result] = i;
         questions[i].isAnswerAccepted = true;
