@@ -80,13 +80,17 @@ contract StackExchangeBounty is usingOraclize {
     }
 
     function increaseBounty(uint _i) {
-        if (msg.value != 0) {
-            if (questions[_i].sponsorsBalance[msg.sender] == 0)
+        if (msg.value == 0 || questions[i].acceptedAnswerID != 0) throw;
 
-                questions[_i].sponsors.push(msg.sender);
+        address sponsorAddr = msg.sender;
 
-            questions[_i].sponsorsBalance[msg.sender] += msg.value;
-        }
+        if (sponsorAddr == questions[i].contractAddress)
+            sponsorAddr = tx.origin;
+
+        if (questions[_i].sponsorsBalance[sponsorAddr] == 0)
+                questions[_i].sponsors.push(sponsorAddr);
+
+        questions[_i].sponsorsBalance[sponsorAddr] += msg.value;
     }
 
     function handleQuestion(uint _questionID, string _site) {
