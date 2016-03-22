@@ -154,7 +154,7 @@ Use this smart contract to sponsor youtubers,<br> pay only for the successful on
 </div>
 
       <div class="page-header">
-        <h3>StackExchange bounty contract</h3>
+        <h3>StackExchange Bounty Contract</h3>
           <div class="fright right">
       <button type="button" class="btn" data-toggle="collapse" data-target="#collapsedit" id="buttoncollapseid">Advanced mode</button>
       <div style="margin-top:7px;"></div>
@@ -162,7 +162,7 @@ Use this smart contract to sponsor youtubers,<br> pay only for the successful on
       <button type="button" class="btn btn-info" style="display:none;" data-target="#addnqc" id="addnq" title="Please connect to your local unlocked node before" data-toggle="modal" disabled>Add a new question</button>
       <button type="button" class="btn btn-success" style="display:none;" data-target="#sponsorq1" id="sponsorq" data-toggle="modal" disabled>Sponsor this question</button>
         </div>
-        <p class="lead">Stackexchange question based escrow<br> </p><span class="text-muted">Powered by <a href="https://www.ethereum.org/" target="_blank">Ethereum</a> + <a href="http://www.oraclize.it" target="_blank">Oraclize</a></span>
+        <p class="lead">StackExchange Question based escrow<br> </p><span class="text-muted">Powered by <a href="https://www.ethereum.org/" target="_blank">Ethereum</a> + <a href="http://www.oraclize.it" target="_blank">Oraclize</a></span>
       </div>
   <div id="collapsedit" class="collapse">
       <div class="row">
@@ -323,9 +323,10 @@ Use this smart contract to sponsor youtubers,<br> pay only for the successful on
 <script type="text/javascript">
 
 var node_list = {
-  'Mainnet' : 'http://178.62.29.206:8081/',
-  'Morden' : 'http://178.62.29.206:8082/',
-  'Testnet161' : 'http://178.62.29.206:8083/',
+    'Localhost': 'http://localhost:8545/',
+    'Mainnet' : 'http://178.62.29.206:8081/',
+    'Morden' : 'http://178.62.29.206:8082/',
+    'Testnet161' : 'http://178.62.29.206:8083/',
 };
 
 var abi = [{"constant":false,"inputs":[{"name":"queryID","type":"bytes32"},{"name":"result","type":"string"}],"name":"__callback","outputs":[],"type":"function"},{"constant":false,"inputs":[],"name":"kill","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"_questionID","type":"uint256"},{"name":"_site","type":"string"}],"name":"handleQuestion","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"_i","type":"uint256"}],"name":"increaseBounty","outputs":[],"type":"function"},{"constant":true,"inputs":[{"name":"_questionID","type":"uint256"},{"name":"_site","type":"string"}],"name":"getAddressQuestion","outputs":[{"name":"questionAddr","type":"address"}],"type":"function"},{"constant":true,"inputs":[{"name":"_i","type":"uint256"}],"name":"getSponsors","outputs":[{"name":"sponsorList","type":"address[]"}],"type":"function"},{"constant":true,"inputs":[{"name":"_i","type":"uint256"},{"name":"_sponsorAddr","type":"address"}],"name":"getSponsorsBalance","outputs":[{"name":"sponsorBalance","type":"uint256"}],"type":"function"},{"inputs":[],"type":"constructor"}];
@@ -343,7 +344,7 @@ var gasamountdeploy = 3000000;
 var gasDepositQuestionMethod = 500000;
 var unlocked_accounts = ''; // []
 var mistob = false;
-var contractdefault = '0x58879fb181b03f910435a653097b9647be1930fb';
+var contractdefault = '0x2f143bb3ef7782192a5cdcd56e3aeb400ff79b9d';
 
 if(typeof mist !== 'undefined'){
 
@@ -466,8 +467,8 @@ if(web3sett==true){
   }
 
   var oraclize_contract_check = web3.eth.getStorageAt(contractid, 0).replace('000000000000000000000000','');
-  var contr_bal = web3.toDecimal(web3.eth.getStorageAt(contractid, 6));
-  var number_of_questions = web3.eth.getStorageAt(contractid, 5);
+  var number_of_questions = web3.eth.getStorageAt(contractid, 1);
+  var contr_bal = web3.toDecimal(web3.eth.getStorageAt(contractid, 2));
   //var vowner = web3.eth.getStorageAt(contractid, 4).replace('0x000000000000000000000000','');
   //var vviews1 = web3.toDecimal(web3.eth.getStorageAt(contractid, 2));
 
@@ -637,7 +638,8 @@ $('#question_show').show();
 
 $('#siteinfo').html('<b>'+clean_questions[id_n][4]+'</b>.stackexchange.com');
 $('#imgfav').attr('src','http://cdn.sstatic.net/'+clean_questions[id_n][4]+'/img/favicon.ico');
-    if(clean_questions[id_n][1]=='0x0000000000000000000000000000000000000000' && nowunix<parseInt(clean_questions[id_n][7])){
+
+if(clean_questions[id_n][1]=='0x0000000000000000000000000000000000000000' && nowunix<parseInt(clean_questions[id_n][7])){
       $('#start').show();
       $('#start').addClass('animated fadeInUp');
       $('#sponsorq').removeAttr('disabled');

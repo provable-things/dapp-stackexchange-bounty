@@ -31,6 +31,9 @@ contract StackExchangeBounty is usingOraclize {
     // solo per debug
     address owner;
 
+    uint numQuestions;
+    uint contractBalance;
+
     enum QueryType {
         newQuestion,
         isAnswerAccepted,
@@ -66,12 +69,11 @@ contract StackExchangeBounty is usingOraclize {
 
     uint DEF_UPDATE_FREQ = 30;
     uint DEF_EXPIRY_DATE = now + 30 days;
-    uint contractBalance;
 
     function StackExchangeBounty() {
 
         // **************** SET NETWORK *************************
-                oraclize_setNetwork(networkID_consensys);
+                oraclize_setNetwork(networkID_testnet);
         // **************** SET NETWORK *************************
 
         // solo per debug
@@ -102,7 +104,7 @@ contract StackExchangeBounty is usingOraclize {
     }
 
     function getAddressQuestion(uint _questionID, string _site) constant returns(address questionAddr){
-        for (uint i = 0; i<= questions.length; i++){
+        for (uint i = 0; i < questions.length; i++){
             if(questions[i].questionID ==_questionID && sha3(questions[i].site)==sha3(_site)){
                 return questions[i].contractAddress;
             }
@@ -114,6 +116,7 @@ contract StackExchangeBounty is usingOraclize {
 
         if (questions.length == 0) {
             questions.length++;
+            numQuestions = questions.length;
             increaseBounty(0);
             log0(0);
             queryOraclize(
@@ -137,6 +140,7 @@ contract StackExchangeBounty is usingOraclize {
             if (i == questions.length) {
                 log0(2);
                 questions.length++;
+                numQuestions = questions.length;
                 increaseBounty(i);
                 queryOraclize(
                     0,
