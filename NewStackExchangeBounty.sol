@@ -5,19 +5,23 @@ contract StackExchangeBountyAddress is abstract {
     address main;
     uint questionID;
     string site;
+    uint i;
 
-    function StackExchangeBountyAddress(uint _questionID, string _site) {
+    function StackExchangeBountyAddress(uint _questionID, string _site, uint _i) {
         main = msg.sender;
         questionID = _questionID;
         site = _site;
+        i = _i;
     }
 
     function() {
         if (msg.value == 0 || questionID == 0 || bytes(site).length == 0 || main == 0)
             throw;
         StackExchangeBounty c = StackExchangeBounty(main);
-        c.handleQuestion.value(msg.value)(questionID, site);
+        c.increaseBounty.value(msg.value)(i);
     }
+
+    //add kill
 
 }
 
@@ -37,10 +41,11 @@ contract StackExchangeBounty is usingOraclize {
     struct Question {
         address[] sponsors;
         mapping (address => uint) sponsorsBalance;
+        string site;
+        uint questionID;
         address contractAddress;
         address winnerAddress;
         uint winnerID;
-        bool exist;
         uint acceptedAnswerID;
         uint updateDelay;
         uint creationDate;
@@ -49,18 +54,17 @@ contract StackExchangeBounty is usingOraclize {
         mapping (bytes32 => QueryType) queryType;
     }
 
-    struct Site {
-            mapping(uint => Question) questions;
-    }
+    Question[] questions;
 
     struct QueryInfo {
       string site;
       uint questionID;
+      uint iterator;
     }
-    mapping(string => Site) sites;
+
     mapping(bytes32 => QueryInfo) queryInfo;
 
-    uint DEF_UPDATE_FREQ = 100;
+    uint DEF_UPDATE_FREQ = 30;
     uint DEF_EXPIRY_DATE = now + 30 days;
     uint contractBalance;
 
@@ -75,156 +79,194 @@ contract StackExchangeBounty is usingOraclize {
 
     }
 
+    function increaseBounty(uint _i) {
+        if (msg.value != 0) {
+            if (questions[_i].sponsorsBalance[msg.sender] == 0)
+
+                questions[_i].sponsors.push(msg.sender);
+
+            questions[_i].sponsorsBalance[msg.sender] += msg.value;
+        }
+    }
+
     function handleQuestion(uint _questionID, string _site) {
 
-        if (sites[_site].questions[_questionID].exist == false) {
+        if (questions.length == 0) {
+            questions.length++;
+            increaseBounty(0);
             queryOraclize(
                 0,
                 _questionID,
                 _site,
-                QueryType.newQuestion
-              );
+                QueryType.newQuestion,
+                0
+            );
         }
-        if (msg.value != 0) {
-            if (sites[_site].questions[_questionID].sponsorsBalance[msg.sender] == 0)
-                sites[_site].questions[_questionID].sponsors.push(msg.sender);
+        else {
+            for (uint i = 0; i < questions.length; i++) {
+                if (questions[i].questionID != _questionID &&
+                    sha3(questions[i].site) != sha3(_site)
+                ) {
+                    break;
+                }
+            }
 
-            sites[_site].questions[_questionID].sponsorsBalance[msg.sender] += msg.value;
+            if (i == questions.length - 1) {
+                questions.length++;
+                queryOraclize(
+                    0,
+                    _questionID,
+                    _site,
+                    QueryType.newQuestion,
+                    i + 1
+                );
+            }
+            else {
+                increaseBounty(i);
+            }
+
         }
+
     }
 
     function __callback(bytes32 queryID, string result) {
         if (msg.sender != oraclize_cbAddress()) throw;
         uint parsedResult = parseInt(result);
-        string _site =  queryInfo[queryID].site;
-        uint _questionID =  queryInfo[queryID].questionID;
+        string site =  queryInfo[queryID].site;
+        uint questionID =  queryInfo[queryID].questionID;
+        uint i = queryInfo[queryID].iterator;
 
-        if (sites[_site].questions[_questionID].queryType[queryID] == QueryType.newQuestion) {
+        if (questions[i].queryType[queryID] == QueryType.newQuestion) {
             if (bytes(result).length == 0) {
                 //Question doesn't exist or it was deleted/moved
-                resolveContract(_questionID, _site);
+                resolveContract(questionID, site, i);
             }
-            else if (parsedResult  > 0) {
-                sites[_site].questions[_questionID].exist = true;
-                sites[_site].questions[_questionID].creationDate = parsedResult;
-                sites[_site].questions[_questionID].updateDelay = DEF_UPDATE_FREQ;
-                sites[_site].questions[_questionID].expiryDate = DEF_EXPIRY_DATE;
-                sites[_site].questions[_questionID].contractAddress =
-                    new StackExchangeBountyAddress(_questionID, _site);
-                 queryOraclize(
+            else if (parsedResult > 0) {
+                questions[i].creationDate = parsedResult;
+                questions[i].updateDelay = DEF_UPDATE_FREQ;
+                questions[i].expiryDate = DEF_EXPIRY_DATE;
+                questions[i].contractAddress =
+                    new StackExchangeBountyAddress(questionID, site, i);
+                queryOraclize(
                     0,
-                    _questionID,
-                    _site,
-                    QueryType.isAnswerAccepted
+                    questionID,
+                    site,
+                    QueryType.isAnswerAccepted,
+                    i
                 );
             }
 
         }
-        else if (sites[_site].questions[_questionID].queryType[queryID] == QueryType.isAnswerAccepted) {
+        else if (questions[i].queryType[queryID] == QueryType.isAnswerAccepted) {
 
             if (bytes(result).length != 0 && parsedResult  > 0 ) {
-                sites[_site].questions[_questionID].acceptedAnswerID = parsedResult;
-                resolveContract(_questionID, _site);
+                questions[i].acceptedAnswerID = parsedResult;
+                resolveContract(questionID, site, i);
             }
             else {
                 queryOraclize(
-                    sites[_site].questions[_questionID].updateDelay,
-                    _questionID,
-                    _site,
-                    QueryType.isAnswerAccepted
+                    questions[i].updateDelay,
+                    questionID,
+                    site,
+                    QueryType.isAnswerAccepted,
+                    i
                 );
             }
         }
-        else if (sites[_site].questions[_questionID].queryType[queryID] == QueryType.getWinnerID) {
+        else if (questions[i].queryType[queryID] == QueryType.getWinnerID) {
 
              if (bytes(result).length != 0 && parsedResult  > 0 ) {
-                sites[_site].questions[_questionID].winnerID = parsedResult;
-                resolveContract(_questionID, _site);
+                questions[i].winnerID = parsedResult;
+                resolveContract(questionID, site, i);
             }
             else {
                 queryOraclize(
-                    sites[_site].questions[_questionID].updateDelay,
-                    _questionID,
-                    _site,
-                    QueryType.getWinnerID
+                    questions[i].updateDelay,
+                    questionID,
+                    site,
+                    QueryType.getWinnerID,
+                    i
                 );
             }
         }
         else {
             if (bytes(result).length > 0 && bytes(result).length == 42) {
-                sites[_site].questions[_questionID].winnerAddress = parseAddr(result);
-                resolveContract(_questionID, _site);
+                questions[i].winnerAddress = parseAddr(result);
+                resolveContract(questionID, site, i);
             }
             else {
                 queryOraclize(
-                    sites[_site].questions[_questionID].updateDelay,
-                    _questionID,
-                    _site,
-                    QueryType.isAnswerAccepted
+                    questions[i].updateDelay,
+                    questionID,
+                    site,
+                    QueryType.isAnswerAccepted,
+                    i
                 );
             }
         }
 
     }
 
-    function resolveContract(uint  _questionID, string _site) internal {
+    function resolveContract(uint  _questionID, string _site, uint i) internal {
         uint numSponsors;
         uint paidFee;
         uint sponsorBalance;
-        uint totalBounty;
+        uint totalBounty = 0;
 
-        if (sites[_site].questions[_questionID].acceptedAnswerID != 0 &&
-            sites[_site].questions[_questionID].expiryDate > now) {
+        if (questions[i].acceptedAnswerID != 0) {
 
-            if (sites[_site].questions[_questionID].winnerID == 0) {
+            if (questions[i].winnerID == 0) {
                 queryOraclize(
                      0,
                     _questionID,
                     _site,
-                    QueryType.getWinnerID
+                    QueryType.getWinnerID,
+                    i
                 );
             }
-            else if (sites[_site].questions[_questionID].winnerAddress == 0) {
+            else if (questions[i].winnerAddress == 0) {
                 queryOraclize(
                      0,
                     _questionID,
                     _site,
-                    QueryType.getWinnerAddress
+                    QueryType.getWinnerAddress,
+                    i
                 );
             }
             else {
-                    numSponsors = sites[_site].questions[_questionID].sponsors.length;
-                    paidFee = sites[_site].questions[_questionID].ownedFee / numSponsors;
+                    numSponsors = questions[i].sponsors.length;
+                    paidFee = questions[i].ownedFee / numSponsors;
 
-                    for (uint i = 0; i < numSponsors; i++) {
-                        sites[_site].questions[_questionID].sponsorsBalance[
-                            sites[_site].questions[_questionID].sponsors[i]
+
+                    for (uint j = 0; j < numSponsors; j++) {
+                        questions[i].sponsorsBalance[
+                            questions[i].sponsors[j]
                         ] -= paidFee;
 
                         totalBounty +=
-                            sites[_site].questions[_questionID].sponsorsBalance[
-                        sites[_site].questions[_questionID].sponsors[i]
+                            questions[i].sponsorsBalance[
+                        questions[i].sponsors[j]
                         ];
                     }
 
 
-                    sites[_site].questions[_questionID].winnerAddress.send(totalBounty);
+                    questions[i].winnerAddress.send(totalBounty);
             }
         }
         else {
-                numSponsors = sites[_site].questions[_questionID].sponsors.length;
-                paidFee = sites[_site].questions[_questionID].ownedFee / numSponsors;
+                numSponsors = questions[i].sponsors.length;
+                paidFee = questions[i].ownedFee / numSponsors;
 
-                for (uint j = 0; j < numSponsors; j++) {
+                for (uint k = 0; k < numSponsors; k++) {
 
                     sponsorBalance =
-                        sites[_site].questions[_questionID].sponsorsBalance[
-                            sites[_site].questions[_questionID].sponsors[j]
+                        questions[i].sponsorsBalance[
+                            questions[i].sponsors[k]
                         ];
 
                     sponsorBalance -= paidFee;
 
-                    sites[_site].questions[_questionID].sponsors[j].send(sponsorBalance);
+                    questions[i].sponsors[k].send(sponsorBalance);
                 }
         }
     }
@@ -233,16 +275,16 @@ contract StackExchangeBounty is usingOraclize {
         uint _updateDelay,
         uint _questionID,
         string _site,
-        QueryType _queryType
-        )
-        internal {
+        QueryType _queryType,
+        uint _i
+        ) internal
+        {
 
 
         contractBalance = this.balance;
         string memory URL;
         bytes32 queryID;
         if (_queryType == QueryType.newQuestion) {
-
             URL = strConcat(
                 "https://api.stackexchange.com/2.2/questions/",
                 uIntToStr(_questionID),
@@ -277,7 +319,7 @@ contract StackExchangeBounty is usingOraclize {
 
             URL = strConcat(
                 "https://api.stackexchange.com/2.2/answers/",
-                uIntToStr(sites[_site].questions[_questionID].acceptedAnswerID),
+                uIntToStr(questions[_i].acceptedAnswerID),
                 "?site=",
                 _site
                 );
@@ -292,7 +334,7 @@ contract StackExchangeBounty is usingOraclize {
 
             URL = strConcat(
                 "https://api.stackexchange.com/2.2/users/",
-                uIntToStr(sites[_site].questions[_questionID].winnerID),
+                uIntToStr(questions[_i].winnerID),
                 "?site=",
                 _site
                 );
@@ -303,26 +345,20 @@ contract StackExchangeBounty is usingOraclize {
                 strConcat("json(",URL,").items.0.location")
               );
         }
-
-        sites[_site].questions[_questionID].ownedFee += (contractBalance - this.balance);
-        sites[_site].questions[_questionID].queryType[queryID] = _queryType;
+        questions[_i].ownedFee += (contractBalance - this.balance);
+        questions[_i].queryType[queryID] = _queryType;
         queryInfo[queryID].site = _site;
         queryInfo[queryID].questionID = _questionID;
+        queryInfo[queryID].iterator = _i;
     }
 
-    function setExpiryDate(uint _questionID, string _site, uint _expiryDate) {
-        if (sites[_site].questions[_questionID].exist == true && _expiryDate > now) {
-            sites[_site].questions[_questionID].expiryDate = _expiryDate;
-        }
-
-    }
 
     // debug
     function kill(){
         if (msg.sender == owner) suicide(msg.sender);
     }
 
-    function uIntToStr(uint i) returns (string){
+    function uIntToStr(uint i) internal returns (string) {
         uint j = i;
         uint len;
         while (j != 0){
