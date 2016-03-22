@@ -71,7 +71,7 @@ contract StackExchangeBounty is usingOraclize {
     function StackExchangeBounty() {
 
         // **************** SET NETWORK *************************
-        oraclize_setNetwork(networkID_consensys);
+                oraclize_setNetwork(networkID_consensys);
         // **************** SET NETWORK *************************
 
         // solo per debug
@@ -80,11 +80,11 @@ contract StackExchangeBounty is usingOraclize {
     }
 
     function increaseBounty(uint _i) {
-        if (msg.value == 0 || questions[i].acceptedAnswerID != 0) throw;
+        if (msg.value == 0 || questions[_i].acceptedAnswerID != 0) throw;
 
         address sponsorAddr = msg.sender;
 
-        if (sponsorAddr == questions[i].contractAddress)
+        if (sponsorAddr == questions[_i].contractAddress)
             sponsorAddr = tx.origin;
 
         if (questions[_i].sponsorsBalance[sponsorAddr] == 0)
@@ -93,11 +93,29 @@ contract StackExchangeBounty is usingOraclize {
         questions[_i].sponsorsBalance[sponsorAddr] += msg.value;
     }
 
+    function getSponsors(uint _i) constant returns (address[] sponsorList){
+        return questions[_i].sponsors;
+    }
+
+    function getSponsorsBalance(uint _i, address _sponsorAddr) constant returns (uint sponsorBalance){
+        return questions[_i].sponsorsBalance[_sponsorAddr];
+    }
+
+    function getAddressQuestion(uint _questionID, string _site) constant returns(address questionAddr){
+        for (uint i = 0; i<= questions.length; i++){
+            if(questions[i].questionID ==_questionID && sha3(questions[i].site)==sha3(_site)){
+                return questions[i].contractAddress;
+            }
+        }
+    }
+
     function handleQuestion(uint _questionID, string _site) {
+        if (_questionID == 0 || bytes(_site).length == 0) throw;
 
         if (questions.length == 0) {
             questions.length++;
             increaseBounty(0);
+            log0(0);
             queryOraclize(
                 0,
                 _questionID,
@@ -108,21 +126,24 @@ contract StackExchangeBounty is usingOraclize {
         }
         else {
             for (uint i = 0; i < questions.length; i++) {
-                if (questions[i].questionID != _questionID &&
-                    sha3(questions[i].site) != sha3(_site)
+                if (questions[i].questionID == _questionID &&
+                    sha3(questions[i].site) == sha3(_site)
                 ) {
+                    log0(1);
                     break;
                 }
             }
 
-            if (i == questions.length - 1) {
+            if (i == questions.length) {
+                log0(2);
                 questions.length++;
+                increaseBounty(i);
                 queryOraclize(
                     0,
                     _questionID,
                     _site,
                     QueryType.newQuestion,
-                    i + 1
+                    i
                 );
             }
             else {
