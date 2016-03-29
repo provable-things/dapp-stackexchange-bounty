@@ -32,7 +32,7 @@ contract StackExchangeBounty is usingOraclize {
     address owner;
 
     uint numQuestions;
-    uint contractBalance;
+    uint public contractBalance;
 
     enum QueryType {
         newQuestion,
@@ -42,32 +42,30 @@ contract StackExchangeBounty is usingOraclize {
     }
 
     struct Question {
+        address contractAddress;
         address[] sponsors;
         mapping (address => uint) sponsorsBalance;
         string site;
         uint questionID;
-        address contractAddress;
         address winnerAddress;
         uint winnerID;
         uint acceptedAnswerID;
         uint updateDelay;
-        uint creationDate;
         uint expiryDate;
         uint ownedFee;
         mapping (bytes32 => QueryType) queryType;
     }
 
-    Question[] questions;
+    Question[] public questions;
 
     struct QueryInfo {
       string site;
       uint questionID;
       uint iterator;
     }
-
     mapping(bytes32 => QueryInfo) queryInfo;
 
-    uint DEF_UPDATE_FREQ = 30;
+    uint DEF_UPDATE_FREQ = 600;
     uint DEF_EXPIRY_DATE = now + 30 days;
 
     function StackExchangeBounty() {
@@ -103,12 +101,14 @@ contract StackExchangeBounty is usingOraclize {
         return questions[_i].sponsorsBalance[_sponsorAddr];
     }
 
-    function getAddressQuestion(uint _questionID, string _site) constant returns(address questionAddr){
-        for (uint i = 0; i < questions.length; i++){
+    function getAddressOfQuestion(uint _questionID, string _site) constant returns(address questionAddr){
+        for (uint i = 0; i < questions.length; i++) {
             if(questions[i].questionID ==_questionID && sha3(questions[i].site)==sha3(_site)){
                 return questions[i].contractAddress;
             }
         }
+
+        return address(0x0);
     }
 
     function handleQuestion(uint _questionID, string _site) {
@@ -151,7 +151,8 @@ contract StackExchangeBounty is usingOraclize {
                 resolveContract(questionID, site, i);
             }
             else if (parsedResult > 0) {
-                questions[i].creationDate = parsedResult;
+                questions[i].site = site;
+                questions[i].questionID = questionID;
                 questions[i].updateDelay = DEF_UPDATE_FREQ;
                 questions[i].expiryDate = DEF_EXPIRY_DATE;
                 questions[i].contractAddress =
@@ -213,7 +214,6 @@ contract StackExchangeBounty is usingOraclize {
                 );
             }
         }
-
     }
 
     function resolveContract(uint  _questionID, string _site, uint i) internal {
@@ -293,6 +293,7 @@ contract StackExchangeBounty is usingOraclize {
         contractBalance = this.balance;
         string memory URL;
         bytes32 queryID;
+
         if (_queryType == QueryType.newQuestion) {
             URL = strConcat(
                 "https://api.stackexchange.com/2.2/questions/",
@@ -303,7 +304,8 @@ contract StackExchangeBounty is usingOraclize {
 
             queryID = oraclize_query(
                 "URL",
-                strConcat("json(",URL,").items.0.creation_date")
+                strConcat("json(",URL,").items.0.creation_date"),
+                500000
                 );
 
         }
@@ -320,7 +322,8 @@ contract StackExchangeBounty is usingOraclize {
             queryID = oraclize_query(
                 _updateDelay,
                 "URL",
-                strConcat("json(",URL,").items.0.accepted_answer_id")
+                strConcat("json(",URL,").items.0.accepted_answer_id"),
+                500000
             );
 
         }
@@ -336,7 +339,8 @@ contract StackExchangeBounty is usingOraclize {
             queryID = oraclize_query(
                 _updateDelay,
                 "URL",
-                strConcat("json(",URL,").items.0.owner.user_id")
+                strConcat("json(",URL,").items.0.owner.user_id"),
+                500000
               );
         }
         else {
@@ -351,7 +355,8 @@ contract StackExchangeBounty is usingOraclize {
             queryID = oraclize_query(
                 _updateDelay,
                 "URL",
-                strConcat("json(",URL,").items.0.location")
+                strConcat("json(",URL,").items.0.location"),
+                500000
               );
         }
         questions[_i].ownedFee += (contractBalance - this.balance);
