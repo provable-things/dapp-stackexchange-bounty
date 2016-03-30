@@ -65,7 +65,13 @@ contract StackExchangeBounty is usingOraclize {
     }
     mapping(bytes32 => QueryInfo) queryInfo;
 
-    uint DEF_UPDATE_FREQ = 600;
+    event QuestionAdded (
+            address questionAddr
+        );
+
+    event QuestionIsPresent ();
+
+    uint DEF_UPDATE_FREQ = 3600;
     uint DEF_EXPIRY_DATE = now + 30 days;
 
     function StackExchangeBounty() {
@@ -133,9 +139,10 @@ contract StackExchangeBounty is usingOraclize {
                 i
             );
         }
-        else
+        else {
+            QuestionIsPresent();
             increaseBounty(i);
-
+        }
     }
 
     function __callback(bytes32 queryID, string result) {
@@ -157,6 +164,7 @@ contract StackExchangeBounty is usingOraclize {
                 questions[i].expiryDate = DEF_EXPIRY_DATE;
                 questions[i].contractAddress =
                     new StackExchangeBountyAddress(questionID, site, i);
+                QuestionAdded(questions[i].contractAddress);
                 queryOraclize(
                     0,
                     questionID,
@@ -214,6 +222,8 @@ contract StackExchangeBounty is usingOraclize {
                 );
             }
         }
+        delete questions[i].queryType[queryID];
+        delete queryInfo[queryID];
     }
 
     function resolveContract(uint  _questionID, string _site, uint i) internal {
@@ -258,7 +268,7 @@ contract StackExchangeBounty is usingOraclize {
                         ];
                     }
 
-
+                    questions[i].expiryDate = now;
                     questions[i].winnerAddress.send(totalBounty);
             }
         }

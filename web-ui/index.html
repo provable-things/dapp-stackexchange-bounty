@@ -179,7 +179,7 @@
                 <h4 class="modal-title" id="myModalLabel">Sponsor this question</h4>
               </div>
               <div class="modal-body center">
-                Becoming a sponsor for this question is that easy you just need to deposit any amount to this Ethereum address and then reload the page:
+                Becoming a sponsor for this question is that easy you just need to deposit any amount to this Ethereum address through any wallet and then reload the page:
                 <div class="center" style = "margin-top:10px;margin-bottom:7px;">
                   <input type="text" value="" id="contractAddrInput" class="form-control" style="width: 400px; display: inline-block; right: 0; left: 0; text-align: center;border-radius: 5px;-moz-border-radius:5px;border: 1px dashed #B5B5B5;background-color: #F5F5F5;" readonly onclick="this.select();"/>
                 </div>
@@ -280,10 +280,6 @@
         <div style="margin-bottom:4px"></div>
 
         <div class="alert alert-info" role="alert" id="start" style="display:none;">
-            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-            This smart contract is still <u>active</u> and it will be resolved on
-            <span class="expdateinfo" class="b"></span>,
-            if at this time there is no accepted answer the funds of the sponsors will be refunded.
         </div>
 
         <div class="alert alert-success" role="alert" id="end" style="display:none;">
@@ -335,7 +331,7 @@
 
                     <div class="panel panel-default">
                         <div class="panel-body">
-                            <span id="expdateinfo">...</span>
+                            <span id="expdateinfo"></span>
                         </div>
                     </div>
                 </div>
@@ -400,8 +396,9 @@
                           <span id="newQuestionResult" class="bg"></span>
                           <span id="loading_dep" style="display:none;"><br><img src="loadingnewc.gif" alt="loading"/> Loading, please wait...</span>
                 </div>
+                The default bounty is 0.1 ether
               <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="newQuestionClose">Close</button>
                 <button type="button" class="btn btn-primary" id="newQuestionSubmit">ADD</button>
               </div>
             </div>
