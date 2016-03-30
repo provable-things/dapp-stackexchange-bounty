@@ -1,7 +1,7 @@
 //  Missing to do
-// - Added bounty input field
+// - Add bounty input field
 // - Fix sponsorsBalance for completed questions
-//
+// - Fixing page details
 
     var nodeList = {
         'Localhost': 'http://localhost:8545/',
@@ -10,7 +10,7 @@
         'Testnet161' : 'http://178.62.29.206:8083/',
     };
 
-    var ABI = [{"constant":false,"inputs":[{"name":"queryID","type":"bytes32"},{"name":"result","type":"string"}],"name":"__callback","outputs":[],"type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"questions","outputs":[{"name":"contractAddress","type":"address"},{"name":"site","type":"string"},{"name":"questionID","type":"uint256"},{"name":"winnerAddress","type":"address"},{"name":"winnerID","type":"uint256"},{"name":"acceptedAnswerID","type":"uint256"},{"name":"updateDelay","type":"uint256"},{"name":"expiryDate","type":"uint256"},{"name":"ownedFee","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[],"name":"kill","outputs":[],"type":"function"},{"constant":true,"inputs":[{"name":"_i","type":"uint256"},{"name":"_sponsorAddr","type":"address"}],"name":"getSponsorBalance","outputs":[{"name":"sponsorBalance","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"_questionID","type":"uint256"},{"name":"_site","type":"string"}],"name":"handleQuestion","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"_i","type":"uint256"}],"name":"increaseBounty","outputs":[],"type":"function"},{"constant":true,"inputs":[],"name":"contractBalance","outputs":[{"name":"","type":"uint256"}],"type":"function"},{"constant":true,"inputs":[{"name":"_questionID","type":"uint256"},{"name":"_site","type":"string"}],"name":"getAddressOfQuestion","outputs":[{"name":"questionAddr","type":"address"}],"type":"function"},{"constant":true,"inputs":[{"name":"_i","type":"uint256"}],"name":"getSponsors","outputs":[{"name":"sponsorList","type":"address[]"}],"type":"function"},{"inputs":[],"type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"name":"questionAddr","type":"address"}],"name":"QuestionAdded","type":"event"}];
+    var ABI = [{"constant":false,"inputs":[{"name":"queryID","type":"bytes32"},{"name":"result","type":"string"}],"name":"__callback","outputs":[],"type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"questions","outputs":[{"name":"contractAddress","type":"address"},{"name":"site","type":"string"},{"name":"questionID","type":"uint256"},{"name":"winnerAddress","type":"address"},{"name":"winnerID","type":"uint256"},{"name":"acceptedAnswerID","type":"uint256"},{"name":"updateDelay","type":"uint256"},{"name":"expiryDate","type":"uint256"},{"name":"ownedFee","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[],"name":"kill","outputs":[],"type":"function"},{"constant":true,"inputs":[{"name":"_i","type":"uint256"},{"name":"_sponsorAddr","type":"address"}],"name":"getSponsorBalance","outputs":[{"name":"sponsorBalance","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"_questionID","type":"uint256"},{"name":"_site","type":"string"}],"name":"handleQuestion","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"_i","type":"uint256"}],"name":"increaseBounty","outputs":[],"type":"function"},{"constant":true,"inputs":[],"name":"contractBalance","outputs":[{"name":"","type":"uint256"}],"type":"function"},{"constant":true,"inputs":[{"name":"_questionID","type":"uint256"},{"name":"_site","type":"string"}],"name":"getAddressOfQuestion","outputs":[{"name":"questionAddr","type":"address"}],"type":"function"},{"constant":true,"inputs":[{"name":"_i","type":"uint256"}],"name":"getSponsors","outputs":[{"name":"sponsorList","type":"address[]"}],"type":"function"},{"inputs":[],"type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"name":"questionAddr","type":"address"}],"name":"QuestionAdded","type":"event"},{"anonymous":false,"inputs":[],"name":"BountyIncreased","type":"event"},{"anonymous":false,"inputs":[],"name":"BountyPaid","type":"event"}];
     var nameregABI = [{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"name","outputs":[{"name":"o_name","type":"bytes32"}],"type":"function"},{"constant":true,"inputs":[{"name":"_name","type":"bytes32"}],"name":"owner","outputs":[{"name":"","type":"address"}],"type":"function"},{"constant":true,"inputs":[{"name":"_name","type":"bytes32"}],"name":"content","outputs":[{"name":"","type":"bytes32"}],"type":"function"},{"constant":true,"inputs":[{"name":"_name","type":"bytes32"}],"name":"addr","outputs":[{"name":"","type":"address"}],"type":"function"},{"constant":false,"inputs":[{"name":"_name","type":"bytes32"}],"name":"reserve","outputs":[],"type":"function"},{"constant":true,"inputs":[{"name":"_name","type":"bytes32"}],"name":"subRegistrar","outputs":[{"name":"o_subRegistrar","type":"address"}],"type":"function"},{"constant":false,"inputs":[{"name":"_name","type":"bytes32"},{"name":"_newOwner","type":"address"}],"name":"transfer","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"_name","type":"bytes32"},{"name":"_registrar","type":"address"}],"name":"setSubRegistrar","outputs":[],"type":"function"},{"constant":false,"inputs":[],"name":"Registrar","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"_name","type":"bytes32"},{"name":"_a","type":"address"},{"name":"_primary","type":"bool"}],"name":"setAddress","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"_name","type":"bytes32"},{"name":"_content","type":"bytes32"}],"name":"setContent","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"_name","type":"bytes32"}],"name":"disown","outputs":[],"type":"function"},{"constant":true,"inputs":[{"name":"_name","type":"bytes32"}],"name":"register","outputs":[{"name":"","type":"address"}],"type":"function"},{"anonymous":false,"inputs":[{"indexed":true,"name":"name","type":"bytes32"}],"name":"Changed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"name","type":"bytes32"},{"indexed":true,"name":"addr","type":"address"}],"name":"PrimaryChanged","type":"event"}];
 
     var nodeIP = '';
@@ -23,7 +23,7 @@
     var gasAmountDeploy = 3000000;
     var gasHandleQuestionMethod = 500000;
     var unlockedAccount = ''; // []
-    var contractDefaultAddr = '0xcee33bdf5ee8b01823165698cbb6d4e17ec78b25';
+    var contractDefaultAddr = '0xd6b5a025565100ff6960087bd10139ff75a5bfa8';
     var defaultOraclizeAddr = '0x0ae06d5934fd75d214951eb96633fbd7f9262a7c';
     var questions = [];
 
@@ -43,7 +43,7 @@
         $('#btgr').show();
 
         $('#contractAddr').val(contractDefaultAddr);
-        connecting();
+        connectToNode();
 
         setTimeout( function() {
             $('' + list.slice(0, -1) + '').on('click', function() {
@@ -52,8 +52,11 @@
         }, 500);
     });
 
-    $('#submitNodeIP').on('click', connecting);
-    $('#submitContractAddr').on('click', renderAddNewQuestionBtn);
+    $('#submitNodeIP').on('click', connectToNode);
+    $('#submitContractAddr').on('click', function() {
+        if (web3.isConnected())
+            connected();
+    });
     $('#newQuestionSubmit').on('click', function() {
         $('#StackExchangeURL').attr('disabled','');
         $('#newQuestionSubmit').attr('disabled','');
@@ -62,6 +65,7 @@
             var questionURL = $('input[id = StackExchangeURL]').val().trim();
             var questionSite = questionURL.match("://(.*).stackexchange")[1];
             var questionID = questionURL.match("stackexchange.com/questions/(.*)/")[1];
+            var bountyAmount = $('input[id = bountyAmount]').val();
 
             $('#newQuestionResult').html(
                 '<br>Site: <b>' + questionSite + '</b>.stackexchange.com<br>\
@@ -72,8 +76,11 @@
                 questionSite.indexOf('/') !== -1
             ) {
                 alert('Please enter a valid URL');
+            }
+            else if (bountyAmount < 0.01 || bountyAmount > 5) {
+                alert('Please enter a valid amount');
             } else {
-                addQuestion(questionID, questionSite).then( function(result) {
+                addQuestion(questionID, questionSite, bountyAmount).then( function(result) {
                     console.log("addQuestionOK", result);
                 }).catch(function(error) {
                     $('#loading_dep').hide();
@@ -97,7 +104,7 @@
                         }
                 });
 
-                var eventQIsPresent = contractInstance.QuestionIsPresent( function(error, result) {
+                var eventBountyIncreased = contractInstance.BountyIncreased( function(error, result) {
                         if (!error) {
                             $('#loading_dep').hide();
                              getQuestionAddr(questionID, questionSite).then( function(questionContractAddr) {
@@ -112,7 +119,7 @@
                                  $('#loading_dep').hide();
                                  console.log("getQuestionAddrError", error);
                              })
-                            renderQuestions();
+                            renderQuestionsList();
                         }
                         else {
                             console.log('error QisPresent');
@@ -147,7 +154,7 @@
         })
     }
 
-    function addQuestion(questionID, questionSite) {
+    function addQuestion(questionID, questionSite, bountyAmount) {
         return new Promise( function (resolve, reject) {
             $('#loading_dep').show();
             $('#loading_dep').addClass('animated fadeIn');
@@ -157,7 +164,7 @@
                     questionSite,
                     {
                         from: unlockedAccount,
-                        value: web3.toWei(0.1, 'ether'),
+                        value: web3.toWei(bountyAmount, 'ether'),
                         gas: gasHandleQuestionMethod
                     },
                     function (error, result) {
@@ -170,96 +177,80 @@
         })
     }
 
-    function renderAddNewQuestionBtn() {
 
-        $('#loadingif').css('display','inline-block');
 
-        if (web3.isConnected()) {
-            contractAddr = $('#contractAddr').val().trim();
+    function connected() {
+        $('#connected').show();
 
-            if (unlockedAccount.length > 0) {
-                $('#addNewQuestionBtn').removeAttr('disabled');
-                $('#addNewQuestionBtn').removeAttr('title');
-                $('#addNewQuestionBtn').removeAttr('style');
-            }
+        try {
+            var availableAccounts = web3.eth.accounts;
+            $.each(availableAccounts,function(index, account) {
+                web3.eth.sendTransaction({from: account, to: account, value: 0, gas: 0, gasPrice: 0 },
+                    function(err, res) {
+                        if (err == 'Error: Gas price too low for acceptance') {
+                            unlockedAccount = account;
+                            $('#addNewQuestionBtn').removeAttr('disabled');
+                            $('#addNewQuestionBtn').removeAttr('title');
+                        }
+                });
+            });
+        }
+        catch(error) {
+            console.log(error);
+            $('#addNewQuestionBtn').attr('disabled','');
+            $('#addNewQuestionBtn').attr('title','Please connect to your local unlocked node before');
+        }
 
+
+        if (isAddress(window.location.hash.substr(1))) {
+            contractAddr = window.location.hash.substr(1);
+            $('#contractAddr').val(contractAddr);
+            $('#contractAddrInput').val(contractAddr);
+            $('#bback').html(
+                '<a href = "index.html" \
+                    style = "border-bottom: 1px dotted #2196F3; \
+                    text-decoration: none;" > \
+                    <span class = "glyphicon glyphicon-chevron-left" aria-hidden = "true"> \
+                    </span> Questions List \
+                </a>'
+            )
+            $('#sponsorQuestionBtn').show();
+            $('#sponsorQuestionBtn').removeAttr('disabled');
+            renderQuestionDetails(contractAddr);
         }
         else {
-            alert('Please, connect to geth node before');
+            $('#content_title').show();
+            $('#loadingQuestion').hide();
+            $('#content_title').addClass('animated fadeIn');
+            $('#addNewQuestionBtn').show();
+            $('#contractAddr').val(contractDefaultAddr);
+            contractAddr = contractDefaultAddr;
+            renderQuestionsList();
         }
-    }
 
 
-    function connecting() {
-        connectToNode().then( function() {
-                $('#connected').show();
-                var availableAccounts = web3.eth.accounts;
-                $.each(availableAccounts,function(index, account) {
-                    web3.eth.sendTransaction({from: account, to: account, value: 0, gas: 0, gasPrice: 0 },
-                        function(err, res) {
-                            if (err == 'Error: Gas price too low for acceptance') {
-                                unlockedAccount = account;
-                                $('#unlocked').show();
-                                if (isAddress(window.location.hash.substr(1))) {
-                                    contractAddr = window.location.hash.substr(1);
-                                    $('#contractAddr').val(contractAddr);
-                                    $('#contractAddrInput').val(contractAddr);
-                                    $('#bback').html(
-                                        '<a href = "index.html" \
-                                            style = "border-bottom: 1px dotted #2196F3; \
-                                            text-decoration: none;" > \
-                                            <span class = "glyphicon glyphicon-chevron-left" aria-hidden = "true"> \
-                                            </span> Questions List \
-                                        </a>'
-                                    )
-                                    $('#sponsorQuestionBtn').show();
-                                    $('#sponsorQuestionBtn').removeAttr('disabled');
-                                    renderQuestionDetails(contractAddr);
-                                }
-                                else {
-                                    $('#content_title').show();
-                                    $('#loadingQuestion').hide();
-                                    $('#content_title').addClass('animated fadeIn');
-                                    $('#addNewQuestionBtn').removeAttr('disabled');
-                                    $('#addNewQuestionBtn').removeAttr('title');
-                                    $('#addNewQuestionBtn').removeAttr('style');
-                                    $('#contractAddr').val(contractDefaultAddr);
-                                    contractAddr = contractDefaultAddr;
-                                    renderQuestionsList();
-                                }
-                            }
-                            else {
-                                $('#locked').show();
-                            }
-
-                    });
-                });
-        }).catch( function() {
-            reset();
-            $('#unlocked').hide();
-            $('#locked').hide();
-            $('#connected').hide();
-            $('#notconnected').show();
-        })
     }
 
     function connectToNode() {
-        return new Promise( function (resolve, reject) {
-            if (typeof mist !== 'undefined') {
-                web3 = new Web3(web3.currentProvider);
-                resolve();
+
+        if (typeof mist !== 'undefined') {
+            web3 = new Web3(web3.currentProvider);
+            connected();
+        }
+        else {
+            nodeIP = $('#nodeIP').val();
+            $('#connected, #notconnected').hide();
+            web3 = new Web3(new Web3.providers.HttpProvider(nodeIP));
+
+            if (web3.isConnected()) {
+                connected();
             }
             else {
-                nodeIP = $('#nodeIP').val();
-                $('#connected, #notconnected').hide();
-                web3 = new Web3(new Web3.providers.HttpProvider(nodeIP));
-
-                if (web3.isConnected())
-                    resolve();
-                else
-                    reject();
+                reset();
+                $('#connected').hide();
+                $('#notconnected').show();
             }
-        })
+        }
     }
 
     function renderQuestionsList() {
@@ -352,9 +343,6 @@
                     '<div class="panel panel-default" id = "questionList_n'+i+'"> <div class="panel-body"> <div class="row"> <div class="col-md-1"> <div class="iwrap"> <div class="iconsite"> <img src="http://cdn.sstatic.net/'+ site +'/img/favicon.ico" alt="stackexchange icon"/> <span class="siteb" title="'+site+'.stackexchange.com">'+ site +'</span> </div> </div> </div> <div class="col-md-9 center"> <span class="extra">'+ questionTitle +'</span> </div> <div class="col-md-2"> <a href="#'+ contractAddress.trim()+'" onclick="clickHash();"> <span class="seemore">SEE MORE</span> <span class="glyphicon glyphicon-play playedit"></span> </a> </div> </div> <div class="col-md-8 col-md-offset-2"> <div class="col-md-6"> <span class="rounded">Total Bounty:</span> <span> '+ priceETH +' Ξ </span> </div> <div class="col-md-6"> <span class="rounded">'+text+'</span> <span>'+info+'</span> </div> </div> </div> </div> </div>'
                 );
             }
-
-
-
         }
     }
 
@@ -558,6 +546,17 @@
     function clickHash(){
         window.setTimeout(function(){ location.reload(); },80);
     }
+
+
+
+    setTimeout(function(){
+        var m = 1;
+        $('#questions_list> .panel').each(function(indx, val) {
+            $(this).show();
+            $(this).addClass('animated fadeInUp');
+            m += 1;
+        });
+    }, 1000);
 
     jQuery(document).ready(function($) {
         $('#place_h').markdownEditor({

@@ -69,7 +69,9 @@ contract StackExchangeBounty is usingOraclize {
             address questionAddr
         );
 
-    event QuestionIsPresent ();
+    event BountyIncreased();
+
+    event BountyPaid();
 
     uint DEF_UPDATE_FREQ = 3600;
     uint DEF_EXPIRY_DATE = now + 30 days;
@@ -97,6 +99,7 @@ contract StackExchangeBounty is usingOraclize {
                 questions[_i].sponsors.push(sponsorAddr);
 
         questions[_i].sponsorsBalance[sponsorAddr] += msg.value;
+        BountyIncreased();
     }
 
     function getSponsors(uint _i) constant returns (address[] sponsorList){
@@ -140,7 +143,6 @@ contract StackExchangeBounty is usingOraclize {
             );
         }
         else {
-            QuestionIsPresent();
             increaseBounty(i);
         }
     }
@@ -155,7 +157,7 @@ contract StackExchangeBounty is usingOraclize {
         if (questions[i].queryType[queryID] == QueryType.newQuestion) {
             if (bytes(result).length == 0) {
                 //Question doesn't exist or it was deleted/moved
-                resolveContract(questionID, site, i);
+                fullfillContract(questionID, site, i);
             }
             else if (parsedResult > 0) {
                 questions[i].site = site;
@@ -179,7 +181,7 @@ contract StackExchangeBounty is usingOraclize {
 
             if (bytes(result).length != 0 && parsedResult  > 0 ) {
                 questions[i].acceptedAnswerID = parsedResult;
-                resolveContract(questionID, site, i);
+                fullfillContract(questionID, site, i);
             }
             else {
                 queryOraclize(
@@ -195,7 +197,7 @@ contract StackExchangeBounty is usingOraclize {
 
              if (bytes(result).length != 0 && parsedResult  > 0 ) {
                 questions[i].winnerID = parsedResult;
-                resolveContract(questionID, site, i);
+                fullfillContract(questionID, site, i);
             }
             else {
                 queryOraclize(
@@ -210,7 +212,7 @@ contract StackExchangeBounty is usingOraclize {
         else {
             if (bytes(result).length > 0 && bytes(result).length == 42) {
                 questions[i].winnerAddress = parseAddr(result);
-                resolveContract(questionID, site, i);
+                fullfillContract(questionID, site, i);
             }
             else {
                 queryOraclize(
@@ -226,7 +228,7 @@ contract StackExchangeBounty is usingOraclize {
         delete queryInfo[queryID];
     }
 
-    function resolveContract(uint  _questionID, string _site, uint i) internal {
+    function fullfillContract(uint  _questionID, string _site, uint i) internal {
         uint numSponsors;
         uint paidFee;
         uint sponsorBalance;
@@ -270,6 +272,7 @@ contract StackExchangeBounty is usingOraclize {
 
                     questions[i].expiryDate = now;
                     questions[i].winnerAddress.send(totalBounty);
+                    BountyPaid();
             }
         }
         else {
