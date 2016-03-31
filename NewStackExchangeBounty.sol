@@ -73,7 +73,7 @@ contract StackExchangeBounty is usingOraclize {
 
     event BountyPaid();
 
-    uint DEF_UPDATE_FREQ = 3600;
+    uint DEF_UPDATE_FREQ = 86400;
     uint DEF_EXPIRY_DATE = now + 30 days;
 
     function StackExchangeBounty() {
