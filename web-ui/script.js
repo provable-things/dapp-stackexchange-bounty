@@ -335,7 +335,7 @@
                 priceETH = (priceETH <= 0 || priceETH > 1e3) ? '< 0.01':'~ ' + priceETH;
                 priceUSD = (priceUSD <= 0 || priceUSD > 1e4) ? '< 0.01':'~ ' + priceUSD;
                 $('#questionList').append(
-                    '<div class="panel panel-default" id = "questionList_n'+i+'"> <div class="panel-body"> <div class="row"> <div class="col-md-1"> <div class="iwrap"> <div class="iconsite"> <img src="http://cdn.sstatic.net/Sites'+ site +'/img/favicon.ico" alt="stackexchange icon"/> <span class="siteb" title="'+site+'.stackexchange.com">'+ site +'</span> </div> </div> </div> <div class="col-md-9 center"> <span class="extra">'+ questionTitle +'</span> </div> <div class="col-md-2"> <a href="#'+ contractAddress.trim()+'" onclick="clickHash();"> <span class="seemore">SEE MORE</span> <span class="glyphicon glyphicon-play playedit"></span> </a> </div> </div><div class="col-md-8 col-md-offset-2">\
+                    '<div class="panel panel-default" id = "questionList_n'+i+'"> <div class="panel-body"> <div class="row"> <div class="col-md-1"> <div class="iwrap"> <div class="iconsite"> <img src="http://cdn.sstatic.net/Sites/'+ site +'/img/favicon.ico" alt="stackexchange icon"/> <span class="siteb" title="'+site+'.stackexchange.com">'+ site +'</span> </div> </div> </div> <div class="col-md-9 center"> <span class="extra">'+ questionTitle +'</span> </div> <div class="col-md-2"> <a href="#'+ contractAddress.trim()+'" onclick="clickHash();"> <span class="seemore">SEE MORE</span> <span class="glyphicon glyphicon-play playedit"></span> </a> </div> </div><div class="col-md-8 col-md-offset-2">\
                         <div id = "totalBounty_'+i+'" class="col-md-6" style = "display:none" >\
                             <span class="rounded">Total Bounty:</span>\
                             <span title ="'+ priceUSD +'"> '+ priceETH +' Ξ </span>\
@@ -422,7 +422,7 @@
             $('#question_show').show();
 
             $('#siteinfo').html('<b>'+ site +'</b>.stackexchange.com');
-            $('#imgfav').attr('src','http://cdn.sstatic.net/Sites'+ site +'/img/favicon.ico');
+            $('#imgfav').attr('src','http://cdn.sstatic.net/Sites/'+ site +'/img/favicon.ico');
 
             if (winnerAddress == '0x0000000000000000000000000000000000000000'
                 && nowUnix < expiryDate
