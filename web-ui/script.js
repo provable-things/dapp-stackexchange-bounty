@@ -245,11 +245,14 @@
             "0x20e12a1f859b3feae5fb2a0a32c18f5a65555bbf"
         ];
 
-        addressOARs.forEach( function (addr) {
-            var OAR = web3.eth.contract([ { "constant": false, "inputs": [], "name": "getAddress", "outputs": [ { "name": "oaddr", "type": "address" } ], "type": "function" }]).at(addr).getAddress.call();
-            if (isAddress(OAR))
-                return OAR;
-        });
+        for (var i = 0; i < addressOARs.length; i++) {
+          var abiOAR = [{"constant":false,"inputs":[],"name":"getAddress","outputs":[{"name":"oaddr","type":"address"}],"type":"function"},{"constant":true,"inputs":[],"name":"addr","outputs":[{"name":"","type":"address"}],"type":"function"},{"constant":false,"inputs":[{"name":"newaddr","type":"address"}],"name":"setAddr","outputs":[],"type":"function"},{"inputs":[],"type":"constructor"}];
+          var OAR = web3.eth.contract(abiOAR).at(addressOARs[i]).getAddress.call();
+          if (isAddress(OAR))
+            return OAR;
+        }
+
+        return 0;
     }
 
     function questionsList() {
@@ -257,10 +260,11 @@
         $('#questionList').empty();
         var numberOfQuestions = web3.toDecimal(web3.eth.getStorageAt(contractAddr, 3));
         var contractBalance = web3.toDecimal(web3.eth.getStorageAt(contractAddr, 4));
-        //var OAR_addr = "0x1d11e5eae3112dbd44f99266872ff1d07c77dce8";
-        // TEST
         var OAR = selectOAR();
         var oraclize = web3.eth.contract(oraclizeABI).at(OAR);
+        var baseprice = web3.toBigNumber(web3.eth.getStorageAt(OAR, 4)).toNumber();
+
+        $('#content_title').hide();
         for (var i = 0; i <= numberOfQuestions; i++) {
 
             questions[i] = [];
@@ -331,14 +335,14 @@
 
             if (questionExist) {
                 var priceETH =  parseFloat(web3.fromWei(totalBounty, 'ether')).toFixed(2);
-                var priceUSD = parseFloat(totalBounty/(1000*oraclize.baseprice())).toFixed(2);
+                var priceUSD = parseFloat(totalBounty/(1000*baseprice)).toFixed(2);
                 priceETH = (priceETH <= 0 || priceETH > 1e3) ? '< 0.01':'~ ' + priceETH;
                 priceUSD = (priceUSD <= 0 || priceUSD > 1e4) ? '< 0.01':'~ ' + priceUSD;
                 $('#questionList').append(
                     '<div class="panel panel-default" id = "questionList_n'+i+'"> <div class="panel-body"> <div class="row"> <div class="col-md-1"> <div class="iwrap"> <div class="iconsite"> <img src="http://cdn.sstatic.net/Sites/'+ site +'/img/favicon.ico" alt="stackexchange icon"/> <span class="siteb" title="'+site+'.stackexchange.com">'+ site +'</span> </div> </div> </div> <div class="col-md-9 center"> <span class="extra">'+ questionTitle +'</span> </div> <div class="col-md-2"> <a href="#'+ contractAddress.trim()+'" onclick="clickHash();"> <span class="seemore">SEE MORE</span> <span class="glyphicon glyphicon-play playedit"></span> </a> </div> </div><div class="col-md-8 col-md-offset-2">\
                         <div id = "totalBounty_'+i+'" class="col-md-6" style = "display:none" >\
                             <span class="rounded">Total Bounty:</span>\
-                            <span title ="'+ priceUSD +'"> '+ priceETH +' Ξ </span>\
+                            <span title ="'+ priceUSD +' $"> '+ priceETH +' Ξ </span>\
                         </div>\
                         <div class="col-md-6">\
                             <span class="rounded" >'+text+'</span>\
@@ -357,7 +361,7 @@
     function questionDetails(contractAddr) {
             var OAR = selectOAR();
             var oraclize = web3.eth.contract(oraclizeABI).at(OAR);
-
+            var baseprice = web3.toBigNumber(web3.eth.getStorageAt(OAR, 4)).toNumber();
             $('#content_title').hide();
             var nowUnix = new Date().getTime()/1000;
             var i = web3.toDecimal(web3.eth.getStorageAt(contractAddr, 3));
@@ -500,7 +504,7 @@
                     ));
             }
             var priceETH =  parseFloat(web3.fromWei(totalBounty, 'ether')).toFixed(2);
-            var priceUSD = parseFloat(totalBounty/(1000*oraclize.baseprice())).toFixed(2);
+            var priceUSD = parseFloat(totalBounty/(1000*baseprice)).toFixed(2);
             priceETH = (priceETH <= 0 || priceETH > 1e3) ? '< 0.01':'~ ' + priceETH;
             priceUSD = (priceUSD <= 0 || priceUSD > 1e4) ? '< 0.01':'~ ' + priceUSD;
 
@@ -509,7 +513,7 @@
 
             for (var k = 0; k < sponsorList.length; k++ ) {
                 var priceETH = parseFloat(web3.fromWei(sponsorsBalanceList[k], 'ether')).toFixed(2);
-                var priceUSD = parseFloat(sponsorsBalanceList[k]/(1000*oraclize.baseprice())).toFixed(2);
+                var priceUSD = parseFloat(sponsorsBalanceList[k]/(1000*baseprice)).toFixed(2);
                 priceETH = (priceETH <= 0 || priceETH > 1e3) ? '< 0.01':'~ ' + priceETH;
                 priceUSD = (priceUSD <= 0 || priceUSD > 1e4) ? '< 0.01':'~ ' + priceUSD;
                 $('#tab > tbody').append(
