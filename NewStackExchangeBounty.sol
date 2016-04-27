@@ -1,7 +1,7 @@
 import "oraclizeAPI.sol";
 
 
-contract StackExchangeBountyAddress is abstract {
+contract StackExchangeBountyAddress {
     address main;
     uint questionID;
     string site;
@@ -74,7 +74,7 @@ contract StackExchangeBounty is usingOraclize {
     event BountyPaid();
 
     uint DEF_UPDATE_FREQ = 86400;
-    uint DEF_EXPIRY_DATE = now + 30 days;
+    uint DEF_EXPIRY_DATE = 30*days;
 
     function StackExchangeBounty() {
 
@@ -163,7 +163,7 @@ contract StackExchangeBounty is usingOraclize {
                 questions[i].site = site;
                 questions[i].questionID = questionID;
                 questions[i].updateDelay = DEF_UPDATE_FREQ;
-                questions[i].expiryDate = DEF_EXPIRY_DATE;
+                questions[i].expiryDate = DEF_EXPIRY_DATE+now;
                 questions[i].contractAddress =
                     new StackExchangeBountyAddress(questionID, site, i);
                 QuestionAdded(questions[i].contractAddress);
