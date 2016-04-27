@@ -22,7 +22,7 @@
     var refundsponsors = '';
     var gasHandleQuestionMethod = 500000;
     var unlockedAccount = ''; // []
-    var contractDefaultAddr = '0xd6b5a025565100ff6960087bd10139ff75a5bfa8';
+    var contractDefaultAddr = '0xcebe9aa3b41a0b12d28ebcb7931fff0e0244165b';
     var defaultOraclizeAddr = '0x9efbea6358bed926b293d2ce63a730d6d98d43dd';
     var questions = [];
 
@@ -102,8 +102,10 @@
                         }
                         setTimeout(function(){
                                 var contractInstance = web3.eth.contract(ABI).at(contractDefaultAddr);
+                                var z=0;
                                 contractInstance.QuestionAdded( function(error, resultQ) {
-                                if (!error) {
+                                if (!error && z==0) {
+                                    z+=1;
                                     $('#loading_dep').hide();
                                     $('#newQuestionResult').append(
                                         '<br>Question deposited at:<br>\
@@ -111,13 +113,12 @@
                                         ' + resultQ.args.questionAddr +
                                         '</a>'
                                     );
-                                    questionsList();
                                 }
                                 else {
                                     console.log('error QAdded');
                                 }
                                 });
-                        },15000);
+                        },25000);
                         }
                 );
                 //})
