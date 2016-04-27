@@ -2,11 +2,11 @@
 // - Awereness for contract type
 // - Check inputs
 
-    var nodeList = {
-        'Localhost': 'http://localhost:8545/',
-        'Mainnet' : 'http://178.62.29.206:8081/',
-        'Morden' : 'http://178.62.29.206:8082/',
-        'Testnet161' : 'http://178.62.29.206:8083/',
+    var node_list = {
+      'mainnet' : 'http://eth-node-1.oraclize.it',
+      'morden' : 'http://eth-testnet-node-1.oraclize.it',
+      'testnet161' : 'http://eth-testnet161-node-1.oraclize.it/',
+      'local' : 'http://localhost:8545'
     };
 
     var ABI = [{"constant":false,"inputs":[{"name":"queryID","type":"bytes32"},{"name":"result","type":"string"}],"name":"__callback","outputs":[],"type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"questions","outputs":[{"name":"contractAddress","type":"address"},{"name":"site","type":"string"},{"name":"questionID","type":"uint256"},{"name":"winnerAddress","type":"address"},{"name":"winnerID","type":"uint256"},{"name":"acceptedAnswerID","type":"uint256"},{"name":"updateDelay","type":"uint256"},{"name":"expiryDate","type":"uint256"},{"name":"ownedFee","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[],"name":"kill","outputs":[],"type":"function"},{"constant":true,"inputs":[{"name":"_i","type":"uint256"},{"name":"_sponsorAddr","type":"address"}],"name":"getSponsorBalance","outputs":[{"name":"sponsorBalance","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"_questionID","type":"uint256"},{"name":"_site","type":"string"}],"name":"handleQuestion","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"_i","type":"uint256"}],"name":"increaseBounty","outputs":[],"type":"function"},{"constant":true,"inputs":[],"name":"contractBalance","outputs":[{"name":"","type":"uint256"}],"type":"function"},{"constant":true,"inputs":[{"name":"_questionID","type":"uint256"},{"name":"_site","type":"string"}],"name":"getAddressOfQuestion","outputs":[{"name":"questionAddr","type":"address"}],"type":"function"},{"constant":true,"inputs":[{"name":"_i","type":"uint256"}],"name":"getSponsors","outputs":[{"name":"sponsorList","type":"address[]"}],"type":"function"},{"inputs":[],"type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"name":"questionAddr","type":"address"}],"name":"QuestionAdded","type":"event"},{"anonymous":false,"inputs":[],"name":"BountyIncreased","type":"event"},{"anonymous":false,"inputs":[],"name":"BountyPaid","type":"event"}];
@@ -23,12 +23,12 @@
     var gasHandleQuestionMethod = 500000;
     var unlockedAccount = ''; // []
     var contractDefaultAddr = '0xd6b5a025565100ff6960087bd10139ff75a5bfa8';
-    var defaultOraclizeAddr = '0x0ae06d5934fd75d214951eb96633fbd7f9262a7c';
+    var defaultOraclizeAddr = '0x9efbea6358bed926b293d2ce63a730d6d98d43dd';
     var questions = [];
 
 
     $( document ).ready(function() {
-
+        /*
         Object.keys(nodeList).forEach(function(i) {
             list += '#'+i+',';
             $('#btgr').append(
@@ -40,6 +40,7 @@
         });
 
         $('#btgr').show();
+        */
         $('#connected, #notconnected').hide();
         $('#contractAddr').val(contractDefaultAddr);
         connectToNode(handleConnection);
@@ -83,29 +84,43 @@
             else if (bountyAmount < 0.01 || bountyAmount > 5) {
                 alert('Please enter a valid amount. It should be more than 10 mEther and less than 5 Ether');
             } else {
-                addQuestion(questionID, questionSite, bountyAmount).then( function(result) {
-                    console.log("addQuestionOK", result);
-                }).catch(function(error) {
-                    $('#loading_dep').hide();
-                    console.log("addQuestionError", error);
-                })
-
-                var contractInstance = web3.eth.contract(ABI).at(contractDefaultAddr);
-                var eventQAdded = contractInstance.QuestionAdded( function(error, result) {
-                        if (!error) {
+                $('#loading_dep').show();
+                $('#loading_dep').addClass('animated fadeIn');
+                web3.eth.contract(ABI).at(contractDefaultAddr).handleQuestion(
+                    questionID,
+                    questionSite,
+                    {
+                        from: unlockedAccount,
+                        value: web3.toWei(bountyAmount, 'ether'),
+                        gas: gasHandleQuestionMethod
+                    },
+                    function (error, result) {
+                        console.log("addQuestionOK", result);
+                        if(error){
                             $('#loading_dep').hide();
-                            $('#newQuestionResult').append(
-                                '<br>Question deposited at:<br>\
-                                <a href="#' + result.args.questionAddr + '" onclick="clickHash();"> \
-                                ' + result.args.questionAddr +
-                                '</a>'
-                            );
-                            questionsList();
+                            console.log("addQuestionError", error);
                         }
-                        else {
-                            console.log('error QAdded');
+                        setTimeout(function(){
+                                var contractInstance = web3.eth.contract(ABI).at(contractDefaultAddr);
+                                contractInstance.QuestionAdded( function(error, resultQ) {
+                                if (!error) {
+                                    $('#loading_dep').hide();
+                                    $('#newQuestionResult').append(
+                                        '<br>Question deposited at:<br>\
+                                        <a href="#' + resultQ.args.questionAddr + '" onclick="clickHash();"> \
+                                        ' + resultQ.args.questionAddr +
+                                        '</a>'
+                                    );
+                                    questionsList();
+                                }
+                                else {
+                                    console.log('error QAdded');
+                                }
+                                });
+                        },15000);
                         }
-                });
+                );
+                //})
             }
 
         } else {
@@ -130,29 +145,6 @@
                             else
                                 reject(error);
                         }
-                );
-        })
-    }
-
-    function addQuestion(questionID, questionSite, bountyAmount) {
-        return new Promise( function (resolve, reject) {
-            $('#loading_dep').show();
-            $('#loading_dep').addClass('animated fadeIn');
-            var txHash =
-                web3.eth.contract(ABI).at(contractDefaultAddr).handleQuestion(
-                    questionID,
-                    questionSite,
-                    {
-                        from: unlockedAccount,
-                        value: web3.toWei(bountyAmount, 'ether'),
-                        gas: gasHandleQuestionMethod
-                    },
-                    function (error, result) {
-                        if (!error)
-                            resolve(result);
-                        else
-                            reject(error);
-                    }
                 );
         })
     }
@@ -190,16 +182,13 @@
         $('#connected').show();
 
         try {
-            var availableAccounts = web3.eth.accounts;
-            $.each(availableAccounts,function(index, account) {
-                web3.eth.sendTransaction({from: account, to: account, value: 0, gas: 0, gasPrice: 0 },
-                    function(err, res) {
-                        if (err == 'Error: Gas price too low for acceptance') {
-                            unlockedAccount = account;
-                            $('#addNewQuestionBtn').removeAttr('disabled');
-                            $('#addNewQuestionBtn').removeAttr('title');
-                        }
-                });
+            web3.eth.sendTransaction({from: web3.eth.accounts[0], to: web3.eth.accounts[0], value: 0, gas: 0, gasPrice: 0 },
+                function(err, res) {
+                    if (err != 'Error: account is locked') {
+                        unlockedAccount = web3.eth.accounts[0];
+                        $('#addNewQuestionBtn').removeAttr('disabled');
+                        $('#addNewQuestionBtn').removeAttr('title');
+                    }
             });
         }
         catch(error) {
@@ -241,7 +230,7 @@
     function selectOAR() {
         var addressOARs = [
             "0x1d11e5eae3112dbd44f99266872ff1d07c77dce8",
-            "0x0ae06d5934fd75d214951eb96633fbd7f9262a7c",
+            "0x9efbea6358bed926b293d2ce63a730d6d98d43dd",
             "0x20e12a1f859b3feae5fb2a0a32c18f5a65555bbf"
         ];
 
@@ -262,11 +251,10 @@
         var contractBalance = web3.toDecimal(web3.eth.getStorageAt(contractAddr, 4));
         var OAR = selectOAR();
         var oraclize = web3.eth.contract(oraclizeABI).at(OAR);
-        var baseprice = web3.toBigNumber(web3.eth.getStorageAt(OAR, 4)).toNumber();
+        var baseprice = oraclize.baseprice().toNumber();
 
         $('#content_title').hide();
         for (var i = 0; i <= numberOfQuestions; i++) {
-
             questions[i] = [];
             questions[i] = JSON.parse(JSON.stringify(web3.eth.contract(ABI).at(contractAddr).questions(i)));
             var contractAddress = questions[i][0];
@@ -361,7 +349,7 @@
     function questionDetails(contractAddr) {
             var OAR = selectOAR();
             var oraclize = web3.eth.contract(oraclizeABI).at(OAR);
-            var baseprice = web3.toBigNumber(web3.eth.getStorageAt(OAR, 4)).toNumber();
+            var baseprice = oraclize.baseprice().toNumber();
             $('#content_title').hide();
             var nowUnix = new Date().getTime()/1000;
             var i = web3.toDecimal(web3.eth.getStorageAt(contractAddr, 3));
