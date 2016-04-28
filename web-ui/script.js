@@ -25,7 +25,9 @@
     var contractDefaultAddr = '0xcebe9aa3b41a0b12d28ebcb7931fff0e0244165b';
     var defaultOraclizeAddr = '0x9efbea6358bed926b293d2ce63a730d6d98d43dd';
     var questions = [];
-
+    var numberOfQuestions;
+    var questionsBalance = [];
+    var questionDate = [];
 
     $( document ).ready(function() {
         /*
@@ -237,25 +239,39 @@
 
         for (var i = 0; i < addressOARs.length; i++) {
           var abiOAR = [{"constant":false,"inputs":[],"name":"getAddress","outputs":[{"name":"oaddr","type":"address"}],"type":"function"},{"constant":true,"inputs":[],"name":"addr","outputs":[{"name":"","type":"address"}],"type":"function"},{"constant":false,"inputs":[{"name":"newaddr","type":"address"}],"name":"setAddr","outputs":[],"type":"function"},{"inputs":[],"type":"constructor"}];
-          var OAR = web3.eth.contract(abiOAR).at(addressOARs[i]).getAddress.call();
-          if (isAddress(OAR))
-            return OAR;
+          try {
+              var OAR = web3.eth.contract(abiOAR).at(addressOARs[i]).getAddress.call();
+              if (isAddress(OAR))
+                return OAR;
+          }
+          catch(e){
+            console.log(e);
+          }
         }
 
         return 0;
     }
 
-    function questionsList() {
-
-        $('#questionList').empty();
-        var numberOfQuestions = web3.toDecimal(web3.eth.getStorageAt(contractAddr, 3));
+    function questionsList(order_type=false,question_start=0) {
+        numberOfQuestions = web3.toDecimal(web3.eth.getStorageAt(contractAddr, 3));
         var contractBalance = web3.toDecimal(web3.eth.getStorageAt(contractAddr, 4));
         var OAR = selectOAR();
         var oraclize = web3.eth.contract(oraclizeABI).at(OAR);
         var baseprice = oraclize.baseprice().toNumber();
 
-        //$('#content_title').hide();
-        for (var i = 0; i <= numberOfQuestions; i++) {
+        var questionLength = (numberOfQuestions<5) ? numberOfQuestions : 5;
+
+        if(question_start!=0){
+            questionLength = question_start;
+        } else {
+            $('#questionList').empty();
+        }
+
+        for (var i = questionLength-1; i>=0 ; i--) {
+            if(question_start!=0){
+                i = question_start+(numberOfQuestions-2);
+            }
+            console.log(i);
             questions[i] = [];
             questions[i] = JSON.parse(JSON.stringify(web3.eth.contract(ABI).at(contractAddr).questions(i)));
             var contractAddress = questions[i][0];
@@ -267,9 +283,13 @@
             var updateDelay = questions[i][6];
             var expiryDate = parseInt(questions[i][7]);
             var ownedFee = questions[i][8];
+            console.log(site);
+            questionDate[i] = i+"@"+expiryDate;
 
             var questionExist;
             var questionTitle;
+
+            var SEerror = false;
 
             $.ajax({
                 url:
@@ -286,10 +306,18 @@
                 },
                 async: false,
                 error: function (xhr, status) {
+                    if(xhr.responseJSON['error_name']=="throttle_violation"){ 
+                        alert("Your IP was temporary banned by Stackexchange API "+xhr.responseJSON['error_message']);
+                        SEerror = true;
+                    }
                     questionExist = false;
                     return;
                 }
             });
+
+            if(SEerror){
+                break;
+            }
 
             var nowUnix = new Date().getTime()/1000;
 
@@ -321,6 +349,8 @@
                         sponsorList[j])
                     );
             }
+            var qOpen = (info != 'Expired' && info != 'Completed') ? (totalBounty+10000000000000000000):totalBounty;
+            questionsBalance[i] = i+"@"+qOpen;
 
             if (questionExist) {
                 var priceETH =  parseFloat(web3.fromWei(totalBounty, 'ether')).toFixed(2);
@@ -328,10 +358,10 @@
                 priceETH = (priceETH <= 0 || priceETH > 1e3) ? '< 0.01':'~ ' + priceETH;
                 priceUSD = (priceUSD <= 0 || priceUSD > 1e4) ? '< 0.01':'~ ' + priceUSD;
                 $('#questionList').append(
-                    '<div class="panel panel-default" id = "questionList_n'+i+'"> <div class="panel-body"> <div class="row"> <div class="col-md-1"> <div class="iwrap"> <div class="iconsite"> <img src="http://cdn.sstatic.net/Sites/'+ site +'/img/favicon.ico" alt="stackexchange icon"/> <span class="siteb" title="'+site+'.stackexchange.com">'+ site +'</span> </div> </div> </div> <div class="col-md-9 center"> <span class="extra">'+ questionTitle +'</span> </div> <div class="col-md-2"> <a href="#'+ contractAddress.trim()+'" onclick="clickHash();"> <span class="seemore">SEE MORE</span> <span class="glyphicon glyphicon-play playedit"></span> </a> </div> </div><div class="col-md-8 col-md-offset-2">\
+                    '<div class="panel panel-default" id = "questionList_n'+i+'" style="display:none;"> <div class="panel-body"> <div class="row"> <div class="col-md-1"> <div class="iwrap"> <div class="iconsite"> <img src="http://cdn.sstatic.net/Sites/'+ site +'/img/favicon.ico" alt="stackexchange icon"/> <span class="siteb" title="'+site+'.stackexchange.com">'+ site +'</span> </div> </div> </div> <div class="col-md-9 center"> <span class="extra">'+ questionTitle +'</span> </div> <div class="col-md-2"> <a href="#'+ contractAddress.trim()+'" onclick="clickHash();"> <span class="seemore">SEE MORE</span> <span class="glyphicon glyphicon-play playedit"></span> </a> </div> </div><div class="col-md-8 col-md-offset-2">\
                         <div id = "totalBounty_'+i+'" class="col-md-6" style = "display:none" >\
                             <span class="rounded">Total Bounty:</span>\
-                            <span title ="'+ priceUSD +' $"> '+ priceETH +' Ξ </span>\
+                            <span title ="'+ priceUSD +' $" id="bounty_val"> '+ priceETH +' Ξ </span>\
                         </div>\
                         <div class="col-md-6">\
                             <span class="rounded" >'+text+'</span>\
@@ -344,8 +374,69 @@
             if(info != 'Expired' && info != 'Completed')
                 $('#totalBounty_'+i+'').show();
 
+            if(question_start!= 0 || i==0 && order_type==false){
+                reArrangeQuestions(0);
+                $("#orderbt").attr('onClick','reArrangeQuestions(1);');
+                $("#order_type").html("Order by date");
+            } else if(order_type==true){
+                $("[id^=questionList_n]").each(function(a){
+                    $(this).show();
+                });
+                $("#orderbt").attr('onClick','reArrangeQuestions(0);');
+                $("#order_type").html("Order by bounty amount");
+            }
+
+            if(i==0 && numberOfQuestions>5 && questionsBalance.length!=numberOfQuestions){
+                var numberRem = (numberOfQuestions-questionsBalance.length);
+                $('#morequestion').attr('onClick','questionsList(false,'+numberRem+')'+';');
+                $('#morequestion').show();
+            }
+
+            if(question_start!= 0 && questionsBalance.length==numberOfQuestions){
+                $('#morequestion').attr('onClick','');
+                $('#morequestion').attr('disabled','');
+            }
+
+            if(question_start!= 0 && i==question_start+(numberOfQuestions-2)){
+                break;
+            }
+
         }
     }
+
+    function reArrangeQuestions(type){
+        var newContent = '';
+        if(type==0){
+            questionsBalance = questionsBalance.sort(function(a, b){
+                return a.substr(a.indexOf("@")+1,a.length) < b.substr(b.indexOf("@")+1,b.length);
+            });
+
+            $.each( questionsBalance, function( index, value ){
+                newContent += $('#questionList_n'+value.substr(0,value.indexOf("@")))[0].outerHTML;
+            });
+            $("#orderbt").attr('onClick','reArrangeQuestions(1);');
+            $("#order_type").html("Order by date");
+        } else if(type==1){
+            questionDate = questionDate.sort(function(a, b){
+                return a.substr(a.indexOf("@")+1,a.length) < b.substr(b.indexOf("@")+1,b.length);
+            });
+
+            $.each( questionDate, function( index, value ){
+                newContent += $('#questionList_n'+value.substr(0,value.indexOf("@")))[0].outerHTML;
+            });
+
+            $("#orderbt").attr('onClick','reArrangeQuestions(0);');
+            $("#order_type").html("Order by bounty amount");
+        }
+        $('#questionList').html(newContent);
+        $("[id^=questionList_n]").each(function(a){
+            $(this).show();
+        });
+    }
+
+    jQuery.fn.outerHTML = function() {
+       return (this[0]) ? this[0].outerHTML : '';  
+    };
 
     function questionDetails(contractAddr) {
             var OAR = selectOAR();
