@@ -254,7 +254,7 @@
         var oraclize = web3.eth.contract(oraclizeABI).at(OAR);
         var baseprice = oraclize.baseprice().toNumber();
 
-        $('#content_title').hide();
+        //$('#content_title').hide();
         for (var i = 0; i <= numberOfQuestions; i++) {
             questions[i] = [];
             questions[i] = JSON.parse(JSON.stringify(web3.eth.contract(ABI).at(contractAddr).questions(i)));
