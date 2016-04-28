@@ -286,8 +286,11 @@
         <div class="row" id="initiald">
             <div class="col-md-8 col-md-offset-2 center" id="content_init">
                 <span id="loadingQuestion"><img src="loadingnewc.gif" alt="loading"/> Loading, please wait...</span>
-                <h4 class="center" style="display:none;" id="content_title">List of All Questions</h4><br>
-                <div id="questionList"></div>
+                <h4 class="center" style="display:none;" id="content_title">List of All Questions <button id="orderbt" type="button" onClick="reArrangeQuestions(1);" class="btn btn-sm btn-default" aria-label="Left Align">
+                  <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span> <span id="order_type">Order by date</span>
+                </button></h4>
+<br>
+                <div id="questionList"></div><div class="center" style="margin-top:10px;"><span class="btn btn-default" onClick="0" id="morequestion" style="display:none;">See more questions</span></div>
             </div>
         </div>
 
