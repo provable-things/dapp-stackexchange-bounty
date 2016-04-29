@@ -567,6 +567,17 @@
                 $('#end').addClass('animated fadeInUp');
             }
 
+            if(winnerID>0 && winnerAddress == '0x0000000000000000000000000000000000000000'){
+                $('#start').html(
+                    '<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>\
+                    This smart contract is still <u>active</u> and it will be resolved on the\
+                    <span class="expdateinfo" class="b">'+info+'</span>.\
+                    If at this time <u><a data-toggle="modal" data-target="#setAddressTut" href="#">the user of the accepted answer won'+"'"+'t set their address</a></u>, the sponsors will be refunded.\
+                ');
+                $("#sponsorQuestionBtn").attr('title','This question already have an accepted answer, you cannot sponsor anymore');
+                $("#sponsorQuestionBtn").attr('disabled','');
+            }
+
             var totalBounty = 0;
             var sponsorList = JSON.parse(JSON.stringify(web3.eth.contract(ABI).at(mainAddr).getSponsors(i)));
             var sponsorsBalanceList = [];
