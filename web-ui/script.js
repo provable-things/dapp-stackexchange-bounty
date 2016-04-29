@@ -30,19 +30,6 @@
     var questionDate = [];
 
     $( document ).ready(function() {
-        /*
-        Object.keys(nodeList).forEach(function(i) {
-            list += '#'+i+',';
-            $('#btgr').append(
-                '<button type="button" class="btn btn-default btn-sm" id="'+i+'">'+i+'</button>'
-            );
-            $('#'+ i).on('click', function () {
-                    $('#nodeIP').val(nodeList[i]);
-            });
-        });
-
-        $('#btgr').show();
-        */
         $('#connected, #notconnected').hide();
         $('#contractAddr').val(contractDefaultAddr);
         connectToNode(handleConnection);
@@ -185,14 +172,20 @@
         $('#connected').show();
 
         try {
-            web3.eth.sendTransaction({from: web3.eth.accounts[0], to: web3.eth.accounts[0], value: 0, gas: 0, gasPrice: 0 },
-                function(err, res) {
-                    if (err != 'Error: account is locked') {
-                        unlockedAccount = web3.eth.accounts[0];
-                        $('#addNewQuestionBtn').removeAttr('disabled');
-                        $('#addNewQuestionBtn').removeAttr('title');
-                    }
-            });
+            if (typeof mist === 'undefined') {
+                web3.eth.sendTransaction({from: web3.eth.accounts[0], to: web3.eth.accounts[0], value: 0, gas: 0, gasPrice: 0 },
+                    function(err, res) {
+                        if (err != 'Error: account is locked') {
+                            unlockedAccount = web3.eth.accounts[0];
+                            $('#addNewQuestionBtn').removeAttr('disabled');
+                            $('#addNewQuestionBtn').removeAttr('title');
+                        }
+                });
+            } else {
+                unlockedAccount = web3.eth.accounts[0];
+                $('#addNewQuestionBtn').removeAttr('disabled');
+                $('#addNewQuestionBtn').removeAttr('title');
+            }
         }
         catch(error) {
             $('#addNewQuestionBtn').attr('disabled','');
@@ -223,7 +216,7 @@
             $('#addNewQuestionBtn').show();
             $('#contractAddr').val(contractDefaultAddr);
             contractAddr = contractDefaultAddr;
-            questionsList();
+            if(typeof numberOfQuestions=='undefined') questionsList();
         }
 
 
@@ -269,7 +262,7 @@
 
         for (var i = questionLength-1; i>=0 ; i--) {
             if(question_start!=0){
-                i = question_start+(numberOfQuestions-2);
+                i = (numberOfQuestions-question_start);
             }
             console.log(i);
             questions[i] = [];
@@ -386,7 +379,7 @@
                 $("#order_type").html("Order by bounty amount");
             }
 
-            if(i==0 && numberOfQuestions>5 && questionsBalance.length!=numberOfQuestions){
+            if(question_start!= 0 || i==0 && numberOfQuestions>5 && questionsBalance.length!=numberOfQuestions){
                 var numberRem = (numberOfQuestions-questionsBalance.length);
                 $('#morequestion').attr('onClick','questionsList(false,'+numberRem+')'+';');
                 $('#morequestion').show();
@@ -397,7 +390,7 @@
                 $('#morequestion').attr('disabled','');
             }
 
-            if(question_start!= 0 && i==question_start+(numberOfQuestions-2)){
+            if(question_start!= 0 && i==(numberOfQuestions-question_start)){
                 break;
             }
 
