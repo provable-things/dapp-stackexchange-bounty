@@ -170,7 +170,6 @@
        Javascript is required, please enable it
    </span>
 
-   <div class="container">
 <!-- Modal -->
         <div class="modal fade" id="sponsorQuestionDiv"
             tABIndex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -195,6 +194,75 @@
           </div>
         </div>
 
+<!-- Modal -->
+    <div class="modal fade" id="addNewQuestionDiv" tABIndex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Add a new question</h4>
+                </div>
+                <div class="modal-body center">
+                  Please paste here the URL of the question you want to send a bounty to
+                  <div class="center" style="margin-top:10px;margin-bottom:7px;">
+                      <form class="form-inline">
+                          <div class="form-group">
+                              <label for="StackExchangeURL">StackExchange URL</label>
+                              <input type="text" class="form-control" id="StackExchangeURL" placeholder="http://example.stackexchange.com/questions/1/example-of-question" style="width: 400px;">
+                          </div>
+                           <div class="form-group">
+                               <label for="BountyAmount">Bounty Amount</label>
+                               <input type="text" class="form-control" id="BountyAmount"
+                                    value = "0.1" style="width: 400px;">
+                           </div>
+                          <span id="newQuestionResult" class="bg"></span>
+                          <span id="loading_dep" style="display:none;"><br><img src="loadingnewc.gif" alt="loading"/> Loading, please wait...</span>
+                </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="newQuestionClose">Close</button>
+                <button type="button" class="btn btn-primary" id="newQuestionSubmit">ADD</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="setAddressTut" tabindex="-1" role="dialog" aria-labelledby="setAddressTut">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Set your ethereum address with SE</h4>
+          </div>
+          <div class="modal-body">
+            You can easily link your ethereum address with your stackexchange account by changing the "Location" field inside
+            your profile account.
+            <br>
+            Click on your profile:
+            <div class="center" style="overflow: hidden;">
+              <img src="http://i.stack.imgur.com/BcQ69.png" alt="change settings stackexchange"/>
+            </div>
+            <br>
+            Click on edit
+            <div class="center" style="overflow: hidden;">
+              <img src="http://i.stack.imgur.com/aJ29k.png" alt="2 change settings stackexchange" style="margin-left: -80px;" />
+            </div>
+          <br>
+          Change the location field with your ethereum address (without space)
+          <br><br>
+          <div class="center" style="overflow: hidden;">
+            Now your Location should look like this:<br>
+            <img src="http://i.imgur.com/9j3jJ4j.png" alt="location example"/>
+          </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+   <div class="container">
         <div class="page-header">
 
             <h3>StackExchange Bounty Contract</h3>
@@ -373,38 +441,6 @@
                     " alt="Oraclize"> Oraclize</a></p>
           </div>
     </footer>
-<!-- Modal -->
-    <div class="modal fade" id="addNewQuestionDiv" tABIndex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">Add a new question</h4>
-                </div>
-                <div class="modal-body center">
-                  Please paste here the URL of the question you want to send a bounty to
-                  <div class="center" style="margin-top:10px;margin-bottom:7px;">
-                      <form class="form-inline">
-                          <div class="form-group">
-                              <label for="StackExchangeURL">StackExchange URL</label>
-                              <input type="text" class="form-control" id="StackExchangeURL" placeholder="http://example.stackexchange.com/questions/1/example-of-question" style="width: 400px;">
-                          </div>
-                           <div class="form-group">
-                               <label for="BountyAmount">Bounty Amount</label>
-                               <input type="text" class="form-control" id="BountyAmount"
-                                    value = "0.1" style="width: 400px;">
-                           </div>
-                          <span id="newQuestionResult" class="bg"></span>
-                          <span id="loading_dep" style="display:none;"><br><img src="loadingnewc.gif" alt="loading"/> Loading, please wait...</span>
-                </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal" id="newQuestionClose">Close</button>
-                <button type="button" class="btn btn-primary" id="newQuestionSubmit">ADD</button>
-              </div>
-            </div>
-          </div>
-        </div>
-    </div>
     <script src = "script.js"></script>
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
