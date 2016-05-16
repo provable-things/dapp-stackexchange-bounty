@@ -1,9 +1,9 @@
 
-    var nodeList = {
-        'Localhost': 'http://localhost:8545/',
-        'Mainnet' : 'http://178.62.29.206:8081/',
-        'Morden' : 'http://178.62.29.206:8082/',
-        'Testnet161' : 'http://178.62.29.206:8083/',
+    var node_list = {
+      'mainnet' : 'http://eth-node-1.oraclize.it',
+      'morden' : 'http://eth-testnet-node-1.oraclize.it',
+      'testnet161' : 'http://eth-testnet161-node-1.oraclize.it/',
+      'local' : 'http://localhost:8545'
     };
 
     var ABI = [{"constant":false,"inputs":[{"name":"queryID","type":"bytes32"},{"name":"result","type":"string"}],"name":"__callback","outputs":[],"type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"questions","outputs":[{"name":"contractAddress","type":"address"},{"name":"site","type":"string"},{"name":"questionID","type":"uint256"},{"name":"winnerAddress","type":"address"},{"name":"winnerID","type":"uint256"},{"name":"acceptedAnswerID","type":"uint256"},{"name":"updateDelay","type":"uint256"},{"name":"expiryDate","type":"uint256"},{"name":"ownedFee","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[],"name":"kill","outputs":[],"type":"function"},{"constant":true,"inputs":[{"name":"_i","type":"uint256"},{"name":"_sponsorAddr","type":"address"}],"name":"getSponsorBalance","outputs":[{"name":"sponsorBalance","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"_questionID","type":"uint256"},{"name":"_site","type":"string"}],"name":"handleQuestion","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"_i","type":"uint256"}],"name":"increaseBounty","outputs":[],"type":"function"},{"constant":true,"inputs":[],"name":"contractBalance","outputs":[{"name":"","type":"uint256"}],"type":"function"},{"constant":true,"inputs":[{"name":"_questionID","type":"uint256"},{"name":"_site","type":"string"}],"name":"getAddressOfQuestion","outputs":[{"name":"questionAddr","type":"address"}],"type":"function"},{"constant":true,"inputs":[{"name":"_i","type":"uint256"}],"name":"getSponsors","outputs":[{"name":"sponsorList","type":"address[]"}],"type":"function"},{"inputs":[],"type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"name":"questionAddr","type":"address"}],"name":"QuestionAdded","type":"event"},{"anonymous":false,"inputs":[],"name":"BountyIncreased","type":"event"},{"anonymous":false,"inputs":[],"name":"BountyPaid","type":"event"}];
@@ -19,24 +19,14 @@
     var refundsponsors = '';
     var gasHandleQuestionMethod = 500000;
     var unlockedAccount = ''; // []
-    var contractDefaultAddr = '0xd6b5a025565100ff6960087bd10139ff75a5bfa8';
-    var defaultOraclizeAddr = '0x0ae06d5934fd75d214951eb96633fbd7f9262a7c';
+    var contractDefaultAddr = '0xcebe9aa3b41a0b12d28ebcb7931fff0e0244165b';
+    var defaultOraclizeAddr = '0x9efbea6358bed926b293d2ce63a730d6d98d43dd';
     var questions = [];
-
+    var numberOfQuestions;
+    var questionsBalance = [];
+    var questionDate = [];
 
     $( document ).ready(function() {
-
-        Object.keys(nodeList).forEach(function(i) {
-            list += '#'+i+',';
-            $('#btgr').append(
-                '<button type="button" class="btn btn-default btn-sm" id="'+i+'">'+i+'</button>'
-            );
-            $('#'+ i).on('click', function () {
-                    $('#nodeIP').val(nodeList[i]);
-            });
-        });
-
-        $('#btgr').show();
         $('#connected, #notconnected').hide();
         $('#contractAddr').val(contractDefaultAddr);
         connectToNode(handleConnection);
@@ -80,29 +70,44 @@
             else if (bountyAmount < 0.01 || bountyAmount > 5) {
                 alert('Please enter a valid amount. It should be more than 10 mEther and less than 5 Ether');
             } else {
-                addQuestion(questionID, questionSite, bountyAmount).then( function(result) {
-                    console.log("addQuestionOK", result);
-                }).catch(function(error) {
-                    $('#loading_dep').hide();
-                    console.log("addQuestionError", error);
-                })
-
-                var contractInstance = web3.eth.contract(ABI).at(contractDefaultAddr);
-                var eventQAdded = contractInstance.QuestionAdded( function(error, result) {
-                        if (!error) {
+                $('#loading_dep').show();
+                $('#loading_dep').addClass('animated fadeIn');
+                web3.eth.contract(ABI).at(contractDefaultAddr).handleQuestion(
+                    questionID,
+                    questionSite,
+                    {
+                        from: unlockedAccount,
+                        value: web3.toWei(bountyAmount, 'ether'),
+                        gas: gasHandleQuestionMethod
+                    },
+                    function (error, result) {
+                        console.log("addQuestionOK", result);
+                        if(error){
                             $('#loading_dep').hide();
-                            $('#newQuestionResult').append(
-                                '<br>Question deposited at:<br>\
-                                <a href="#' + result.args.questionAddr + '" onclick="clickHash();"> \
-                                ' + result.args.questionAddr +
-                                '</a>'
-                            );
-                            questionsList();
+                            console.log("addQuestionError", error);
                         }
-                        else {
-                            console.log('error QAdded');
+                        setTimeout(function(){
+                                var contractInstance = web3.eth.contract(ABI).at(contractDefaultAddr);
+                                var z=0;
+                                contractInstance.QuestionAdded( function(error, resultQ) {
+                                if (!error && z==0) {
+                                    z+=1;
+                                    $('#loading_dep').hide();
+                                    $('#newQuestionResult').append(
+                                        '<br>Question deposited at:<br>\
+                                        <a href="#' + resultQ.args.questionAddr + '" onclick="clickHash();"> \
+                                        ' + resultQ.args.questionAddr +
+                                        '</a>'
+                                    );
+                                }
+                                else {
+                                    console.log('error QAdded');
+                                }
+                                });
+                        },25000);
                         }
-                });
+                );
+                //})
             }
 
         } else {
@@ -127,29 +132,6 @@
                             else
                                 reject(error);
                         }
-                );
-        })
-    }
-
-    function addQuestion(questionID, questionSite, bountyAmount) {
-        return new Promise( function (resolve, reject) {
-            $('#loading_dep').show();
-            $('#loading_dep').addClass('animated fadeIn');
-            var txHash =
-                web3.eth.contract(ABI).at(contractDefaultAddr).handleQuestion(
-                    questionID,
-                    questionSite,
-                    {
-                        from: unlockedAccount,
-                        value: web3.toWei(bountyAmount, 'ether'),
-                        gas: gasHandleQuestionMethod
-                    },
-                    function (error, result) {
-                        if (!error)
-                            resolve(result);
-                        else
-                            reject(error);
-                    }
                 );
         })
     }
@@ -187,17 +169,20 @@
         $('#connected').show();
 
         try {
-            var availableAccounts = web3.eth.accounts;
-            $.each(availableAccounts,function(index, account) {
-                web3.eth.sendTransaction({from: account, to: account, value: 0, gas: 0, gasPrice: 0 },
+            if (typeof mist === 'undefined') {
+                web3.eth.sendTransaction({from: web3.eth.accounts[0], to: web3.eth.accounts[0], value: 0, gas: 0, gasPrice: 0 },
                     function(err, res) {
-                        if (err == 'Error: Gas price too low for acceptance') {
-                            unlockedAccount = account;
+                        if (err != 'Error: account is locked') {
+                            unlockedAccount = web3.eth.accounts[0];
                             $('#addNewQuestionBtn').removeAttr('disabled');
                             $('#addNewQuestionBtn').removeAttr('title');
                         }
                 });
-            });
+            } else {
+                unlockedAccount = web3.eth.accounts[0];
+                $('#addNewQuestionBtn').removeAttr('disabled');
+                $('#addNewQuestionBtn').removeAttr('title');
+            }
         }
         catch(error) {
             $('#addNewQuestionBtn').attr('disabled','');
@@ -228,7 +213,7 @@
             $('#addNewQuestionBtn').show();
             $('#contractAddr').val(contractDefaultAddr);
             contractAddr = contractDefaultAddr;
-            questionsList();
+            if(typeof numberOfQuestions=='undefined') questionsList();
         }
 
 
@@ -238,32 +223,45 @@
     function selectOAR() {
         var addressOARs = [
             "0x1d11e5eae3112dbd44f99266872ff1d07c77dce8",
-            "0x0ae06d5934fd75d214951eb96633fbd7f9262a7c",
+            "0x9efbea6358bed926b293d2ce63a730d6d98d43dd",
             "0x20e12a1f859b3feae5fb2a0a32c18f5a65555bbf"
         ];
 
         for (var i = 0; i < addressOARs.length; i++) {
           var abiOAR = [{"constant":false,"inputs":[],"name":"getAddress","outputs":[{"name":"oaddr","type":"address"}],"type":"function"},{"constant":true,"inputs":[],"name":"addr","outputs":[{"name":"","type":"address"}],"type":"function"},{"constant":false,"inputs":[{"name":"newaddr","type":"address"}],"name":"setAddr","outputs":[],"type":"function"},{"inputs":[],"type":"constructor"}];
-          var OAR = web3.eth.contract(abiOAR).at(addressOARs[i]).getAddress.call();
-          if (isAddress(OAR))
-            return OAR;
+          try {
+              var OAR = web3.eth.contract(abiOAR).at(addressOARs[i]).getAddress.call();
+              if (isAddress(OAR))
+                return OAR;
+          }
+          catch(e){
+            console.log(e);
+          }
         }
 
         return 0;
     }
 
-    function questionsList() {
-
-        $('#questionList').empty();
-        var numberOfQuestions = web3.toDecimal(web3.eth.getStorageAt(contractAddr, 3));
+    function questionsList(order_type=false,question_start=0) {
+        numberOfQuestions = web3.toDecimal(web3.eth.getStorageAt(contractAddr, 3));
         var contractBalance = web3.toDecimal(web3.eth.getStorageAt(contractAddr, 4));
         var OAR = selectOAR();
         var oraclize = web3.eth.contract(oraclizeABI).at(OAR);
-        var baseprice = web3.toBigNumber(web3.eth.getStorageAt(OAR, 4)).toNumber();
+        var baseprice = oraclize.baseprice().toNumber();
 
-        $('#content_title').hide();
-        for (var i = 0; i <= numberOfQuestions; i++) {
+        var questionLength = (numberOfQuestions<5) ? numberOfQuestions : 5;
 
+        if(question_start!=0){
+            questionLength = question_start;
+        } else {
+            $('#questionList').empty();
+        }
+
+        for (var i = questionLength-1; i>=0 ; i--) {
+            if(question_start!=0){
+                i = (numberOfQuestions-question_start);
+            }
+            console.log(i);
             questions[i] = [];
             questions[i] = JSON.parse(JSON.stringify(web3.eth.contract(ABI).at(contractAddr).questions(i)));
             var contractAddress = questions[i][0];
@@ -275,9 +273,13 @@
             var updateDelay = questions[i][6];
             var expiryDate = parseInt(questions[i][7]);
             var ownedFee = questions[i][8];
+            console.log(site);
+            questionDate[i] = i+"@"+expiryDate;
 
             var questionExist;
             var questionTitle;
+
+            var SEerror = false;
 
             $.ajax({
                 url:
@@ -294,10 +296,18 @@
                 },
                 async: false,
                 error: function (xhr, status) {
+                    if(xhr.responseJSON['error_name']=="throttle_violation"){ 
+                        alert("Your IP was temporary banned by Stackexchange API "+xhr.responseJSON['error_message']);
+                        SEerror = true;
+                    }
                     questionExist = false;
                     return;
                 }
             });
+
+            if(SEerror){
+                break;
+            }
 
             var nowUnix = new Date().getTime()/1000;
 
@@ -329,6 +339,8 @@
                         sponsorList[j])
                     );
             }
+            var qOpen = (info != 'Expired' && info != 'Completed') ? (totalBounty+10000000000000000000):totalBounty;
+            questionsBalance[i] = i+"@"+qOpen;
 
             if (questionExist) {
                 var priceETH =  parseFloat(web3.fromWei(totalBounty, 'ether')).toFixed(2);
@@ -336,10 +348,10 @@
                 priceETH = (priceETH <= 0 || priceETH > 1e3) ? '< 0.01':'~ ' + priceETH;
                 priceUSD = (priceUSD <= 0 || priceUSD > 1e4) ? '< 0.01':'~ ' + priceUSD;
                 $('#questionList').append(
-                    '<div class="panel panel-default" id = "questionList_n'+i+'"> <div class="panel-body"> <div class="row"> <div class="col-md-1"> <div class="iwrap"> <div class="iconsite"> <img src="http://cdn.sstatic.net/Sites/'+ site +'/img/favicon.ico" alt="stackexchange icon"/> <span class="siteb" title="'+site+'.stackexchange.com">'+ site +'</span> </div> </div> </div> <div class="col-md-9 center"> <span class="extra">'+ questionTitle +'</span> </div> <div class="col-md-2"> <a href="#'+ contractAddress.trim()+'" onclick="clickHash();"> <span class="seemore">SEE MORE</span> <span class="glyphicon glyphicon-play playedit"></span> </a> </div> </div><div class="col-md-8 col-md-offset-2">\
+                    '<div class="panel panel-default" id = "questionList_n'+i+'" style="display:none;"> <div class="panel-body"> <div class="row"> <div class="col-md-1"> <div class="iwrap"> <div class="iconsite"> <img src="http://cdn.sstatic.net/Sites/'+ site +'/img/favicon.ico" alt="stackexchange icon"/> <span class="siteb" title="'+site+'.stackexchange.com">'+ site +'</span> </div> </div> </div> <div class="col-md-9 center"> <span class="extra">'+ questionTitle +'</span> </div> <div class="col-md-2"> <a href="#'+ contractAddress.trim()+'" onclick="clickHash();"> <span class="seemore">SEE MORE</span> <span class="glyphicon glyphicon-play playedit"></span> </a> </div> </div><div class="col-md-8 col-md-offset-2">\
                         <div id = "totalBounty_'+i+'" class="col-md-6" style = "display:none" >\
                             <span class="rounded">Total Bounty:</span>\
-                            <span title ="'+ priceUSD +' $"> '+ priceETH +' Ξ </span>\
+                            <span title ="'+ priceUSD +' $" id="bounty_val"> '+ priceETH +' Ξ </span>\
                         </div>\
                         <div class="col-md-6">\
                             <span class="rounded" >'+text+'</span>\
@@ -352,13 +364,74 @@
             if(info != 'Expired' && info != 'Completed')
                 $('#totalBounty_'+i+'').show();
 
+            if(question_start!= 0 || i==0 && order_type==false){
+                reArrangeQuestions(0);
+                $("#orderbt").attr('onClick','reArrangeQuestions(1);');
+                $("#order_type").html("Order by date");
+            } else if(order_type==true){
+                $("[id^=questionList_n]").each(function(a){
+                    $(this).show();
+                });
+                $("#orderbt").attr('onClick','reArrangeQuestions(0);');
+                $("#order_type").html("Order by bounty amount");
+            }
+
+            if(question_start!= 0 || i==0 && numberOfQuestions>5 && questionsBalance.length!=numberOfQuestions){
+                var numberRem = (numberOfQuestions-questionsBalance.length);
+                $('#morequestion').attr('onClick','questionsList(false,'+numberRem+')'+';');
+                $('#morequestion').show();
+            }
+
+            if(question_start!= 0 && questionsBalance.length==numberOfQuestions){
+                $('#morequestion').attr('onClick','');
+                $('#morequestion').attr('disabled','');
+            }
+
+            if(question_start!= 0 && i==(numberOfQuestions-question_start)){
+                break;
+            }
+
         }
     }
+
+    function reArrangeQuestions(type){
+        var newContent = '';
+        if(type==0){
+            questionsBalance = questionsBalance.sort(function(a, b){
+                return a.substr(a.indexOf("@")+1,a.length) < b.substr(b.indexOf("@")+1,b.length);
+            });
+
+            $.each( questionsBalance, function( index, value ){
+                newContent += $('#questionList_n'+value.substr(0,value.indexOf("@")))[0].outerHTML;
+            });
+            $("#orderbt").attr('onClick','reArrangeQuestions(1);');
+            $("#order_type").html("Order by date");
+        } else if(type==1){
+            questionDate = questionDate.sort(function(a, b){
+                return a.substr(a.indexOf("@")+1,a.length) < b.substr(b.indexOf("@")+1,b.length);
+            });
+
+            $.each( questionDate, function( index, value ){
+                newContent += $('#questionList_n'+value.substr(0,value.indexOf("@")))[0].outerHTML;
+            });
+
+            $("#orderbt").attr('onClick','reArrangeQuestions(0);');
+            $("#order_type").html("Order by bounty amount");
+        }
+        $('#questionList').html(newContent);
+        $("[id^=questionList_n]").each(function(a){
+            $(this).show();
+        });
+    }
+
+    jQuery.fn.outerHTML = function() {
+       return (this[0]) ? this[0].outerHTML : '';  
+    };
 
     function questionDetails(contractAddr) {
             var OAR = selectOAR();
             var oraclize = web3.eth.contract(oraclizeABI).at(OAR);
-            var baseprice = web3.toBigNumber(web3.eth.getStorageAt(OAR, 4)).toNumber();
+            var baseprice = oraclize.baseprice().toNumber();
             $('#content_title').hide();
             var nowUnix = new Date().getTime()/1000;
             var i = web3.toDecimal(web3.eth.getStorageAt(contractAddr, 3));
@@ -482,6 +555,17 @@
                 $('#resultsuccess').html("the sponsors have received a refund of their balance");
                 $('#end').show();
                 $('#end').addClass('animated fadeInUp');
+            }
+
+            if(winnerID>0 && winnerAddress == '0x0000000000000000000000000000000000000000'){
+                $('#start').html(
+                    '<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>\
+                    This smart contract is still <u>active</u> and it will be resolved on the\
+                    <span class="expdateinfo" class="b">'+info+'</span>.\
+                    If at this time <u><a data-toggle="modal" data-target="#setAddressTut" href="#">the user of the accepted answer won'+"'"+'t set their address</a></u>, the sponsors will be refunded.\
+                ');
+                $("#sponsorQuestionBtn").attr('title','This question already have an accepted answer, you cannot sponsor anymore');
+                $("#sponsorQuestionBtn").attr('disabled','');
             }
 
             var totalBounty = 0;
