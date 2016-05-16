@@ -26,7 +26,7 @@ contract StackExchangeBountyAddress is abstract {
 
 contract StackExchangeBounty is usingOraclize {
 
-    // solo per debug
+    // only for debug purpose
     address owner;
 
     uint numQuestions;
