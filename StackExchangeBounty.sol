@@ -21,8 +21,6 @@ contract StackExchangeBountyAddress is abstract {
         c.increaseBounty.value(msg.value)(i);
     }
 
-    //add kill
-
 }
 
 
@@ -82,7 +80,7 @@ contract StackExchangeBounty is usingOraclize {
                 oraclize_setNetwork(networkID_testnet);
         // **************** SET NETWORK *************************
 
-        // solo per debug
+        // only for debug purpose
         owner = msg.sender;
 
     }
@@ -380,12 +378,13 @@ contract StackExchangeBounty is usingOraclize {
     }
 
 
-    // debug
+    // only for debug purpose
     function kill(){
         if (msg.sender == owner) suicide(msg.sender);
     }
 
     function uIntToStr(uint i) internal returns (string) {
+        if (i == 0) return "0";
         uint j = i;
         uint len;
         while (j != 0){
