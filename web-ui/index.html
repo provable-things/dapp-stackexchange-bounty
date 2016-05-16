@@ -9,13 +9,13 @@
 >>>>>>> working_branch
   <link rel="icon" type="image/png" href="favicon.png">
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-	<script type="text/javascript" src="web3.min.js"></script>
+	<script type="text/javascript" src="../web3.min.js"></script>
   <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.6/paper/bootstrap.min.css">
   <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css">
-  <script type="text/javascript" src="https://pagedown.googlecode.com/hg/Markdown.Converter.js"></script>
-  <script type="text/javascript" src="https://pagedown.googlecode.com/hg/Markdown.Sanitizer.js"></script>
-  <script type="text/javascript" src="https://pagedown.googlecode.com/hg/Markdown.Editor.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pagedown/1.0/Markdown.Converter.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pagedown/1.0/Markdown.Sanitizer.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pagedown/1.0/Markdown.Editor.min.js"></script>
   <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML-full"></script>
   <script type="text/javascript" src="MJPDEditing.js"></script>
 <<<<<<< HEAD
@@ -968,7 +968,6 @@ function reset(){
        Javascript is required, please enable it
    </span>
 
-   <div class="container">
 <!-- Modal -->
         <div class="modal fade" id="sponsorQuestionDiv"
             tABIndex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -981,7 +980,7 @@ function reset(){
                 <h4 class="modal-title" id="myModalLabel">Sponsor this question</h4>
               </div>
               <div class="modal-body center">
-                  You can become a sponsor for this question by sending a transaction with any wallet to the following Ethereum address. The transaction must have a custom gas value of 40000.
+                  You can become a sponsor for this question by sending a transaction with any wallet to the following Ethereum address. The transaction must have a custom gas value of 70000.
                 <div class="center" style = "margin-top:10px;margin-bottom:7px;">
                   <input type="text" value="" id="contractAddrInput" class="form-control" style="width: 400px; display: inline-block; right: 0; left: 0; text-align: center;border-radius: 5px;-moz-border-radius:5px;border: 1px dashed #B5B5B5;background-color: #F5F5F5;" readonly onclick="this.select();"/>
                 </div>
@@ -993,6 +992,75 @@ function reset(){
           </div>
         </div>
 
+<!-- Modal -->
+    <div class="modal fade" id="addNewQuestionDiv" tABIndex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Add a new question</h4>
+                </div>
+                <div class="modal-body center">
+                  Please paste here the URL of the question you want to send a bounty to
+                  <div class="center" style="margin-top:10px;margin-bottom:7px;">
+                      <form class="form-inline">
+                          <div class="form-group">
+                              <label for="StackExchangeURL">StackExchange URL</label>
+                              <input type="text" class="form-control" id="StackExchangeURL" placeholder="http://example.stackexchange.com/questions/1/example-of-question" style="width: 400px;">
+                          </div>
+                           <div class="form-group">
+                               <label for="BountyAmount">Bounty Amount</label>
+                               <input type="text" class="form-control" id="BountyAmount"
+                                    value = "0.1" style="width: 400px;">
+                           </div>
+                          <span id="newQuestionResult" class="bg"></span>
+                          <span id="loading_dep" style="display:none;"><br><img src="loadingnewc.gif" alt="loading"/> Loading, please wait...</span>
+                </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="newQuestionClose">Close</button>
+                <button type="button" class="btn btn-primary" id="newQuestionSubmit">ADD</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="setAddressTut" tabindex="-1" role="dialog" aria-labelledby="setAddressTut">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Set your ethereum address with SE</h4>
+          </div>
+          <div class="modal-body">
+            You can easily link your ethereum address with your stackexchange account by changing the "Location" field inside
+            your profile account.
+            <br>
+            Click on your profile:
+            <div class="center" style="overflow: hidden;">
+              <img src="http://i.stack.imgur.com/BcQ69.png" alt="change settings stackexchange"/>
+            </div>
+            <br>
+            Click on edit
+            <div class="center" style="overflow: hidden;">
+              <img src="http://i.stack.imgur.com/aJ29k.png" alt="2 change settings stackexchange" style="margin-left: -80px;" />
+            </div>
+          <br>
+          Change the location field with your ethereum address (without space)
+          <br><br>
+          <div class="center" style="overflow: hidden;">
+            Now your Location should look like this:<br>
+            <img src="http://i.imgur.com/9j3jJ4j.png" alt="location example"/>
+          </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+   <div class="container">
         <div class="page-header">
 
             <h3>StackExchange Bounty Contract</h3>
@@ -1052,7 +1120,7 @@ function reset(){
                         <div class="form-inline">
                             <div class="form-group">
                                 <label for="nodeIP" class="control-label">Connect to node:</label>
-                                <input type="text" class="form-control" id = "nodeIP" style="width:200px;margin: 0 5px 0 5px;" value = "http://178.62.29.206:8082/">
+                                <input type="text" class="form-control" id = "nodeIP" style="width:200px;margin: 0 5px 0 5px;" value = "http://eth-testnet-node-1.oraclize.it">
                       <!--<input type="text" class="form-control" id="nodeIP" style="width:200px;margin: 0 5px 0 5px;" value="http://localhost:8545">-->
                                 <span class="btn btn-default" id="submitNodeIP">CONNECT</span>
                             </div>
@@ -1084,8 +1152,11 @@ function reset(){
         <div class="row" id="initiald">
             <div class="col-md-8 col-md-offset-2 center" id="content_init">
                 <span id="loadingQuestion"><img src="loadingnewc.gif" alt="loading"/> Loading, please wait...</span>
-                <h4 class="center" style="display:none;" id="content_title">List of All Questions</h4><br>
-                <div id="questionList"></div>
+                <h4 class="center" style="display:none;" id="content_title">List of All Questions <button id="orderbt" type="button" onClick="reArrangeQuestions(1);" class="btn btn-sm btn-default" aria-label="Left Align">
+                  <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span> <span id="order_type">Order by date</span>
+                </button></h4>
+<br>
+                <div id="questionList"></div><div class="center" style="margin-top:10px;"><span class="btn btn-default" onClick="0" id="morequestion" style="display:none;">See more questions</span></div>
             </div>
         </div>
 
@@ -1162,44 +1233,9 @@ function reset(){
 
     <footer class="footer">
           <div class="container">
-            <p class="text-muted center">Designed by &nbsp;
-                <a href="http://www.oraclize.it" target="_blank">
-                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAPCAYAAADphp8SAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6MEU2RUUyQjNDMzRFMTFFNTk3MDRCNTJBQTk2N0M4NUIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6MEU2RUUyQjRDMzRFMTFFNTk3MDRCNTJBQTk2N0M4NUIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDowRTZFRTJCMUMzNEUxMUU1OTcwNEI1MkFBOTY3Qzg1QiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDowRTZFRTJCMkMzNEUxMUU1OTcwNEI1MkFBOTY3Qzg1QiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PuHu1SIAAAKmSURBVHjadFNLTxNRGD3z7LTFNvQBFTGgEpGHEg3qbzBuSExM2GjizqU/wV/gloSdJq5MXBlZGDcuDBEf0IgmRKDQQAGpfVDotJ0Zz3dpjZJ4mzN3Ovd+5zvf+e7V8P/RQwwSo8QVTdPGDF0fbnlemP+XiJfEHLEqm7V2kCmbiZvEpK7r47HYqaFUKpHI9KTRS5zpyyC/tY3Xc28xMTGG9dwmCoXdA+5/RzwRginbth8PDpy9nOlNa6czvUinkojHY4hEHBi6gYA/0zSxVdhBdyKOO1O3UasdYmu70JX9+v3Wh4UvI6ZhGLPTd6dSI5cukpMhfgDP9+ETzWYLTbRwLF1DsVhCJBzm9yZYKs6fG0AymcCnz9mYyQ9BItGNVqul8N9BEyrVKlVGSKIjCAImC5DL5eG6blFn8FG5UlEZTg56Bcsy1bsorFSqiEaFqLOuIbeRl9dNnY96tXIA/QSRkEigmCpDShZfpDQ6oBK7bgNr6xuynBWimgRo+r9EtmVhMbuMZ89fKK8830O97rK0sDKf3qL4q4TdvZ+yfV50l0ssTbIoK9rKmvTrxvWrGB8dRihkw200xAuEHYf+QBFJWbTG7RDtlcsV6IauFsVwz/M4e2q2bEsRt9ipBpU5JFLdJdnKijqLy8SaEOWFeWb2KRrMKgQ8vfCki5y7olE8uD+tygsCX6mTrknytn9vpBdCtGIaJiavTSBk2zBMQx0+6ZbMEhgJO9jfLypljhNSa6vrOdQOD+XTq87VWJJyhi4MoiedUir+DDkrwbGxYrZ0TsiPjupYXJKKsE0sdO5anPjR39+X7OP1kO4pReaxIkGYKgo7u3g//1FdH0lcYmk8lDOMffj3pb1HPCK6CKsNUSvHwyekM2wtcm1zs8Q3YpFoCMFvAQYAe9MxYsjZmN8AAAAASUVORK5CYII=
-                    " alt="Oraclize"> Oraclize</a></p>
+            <p class="text-muted center">Designed by <a href="http://www.oraclize.it" target="_blank">Oraclize</a></p>
           </div>
     </footer>
-<!-- Modal -->
-    <div class="modal fade" id="addNewQuestionDiv" tABIndex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">Add a new question</h4>
-                </div>
-                <div class="modal-body center">
-                  Please paste here the URL of the question you want to send a bounty to
-                  <div class="center" style="margin-top:10px;margin-bottom:7px;">
-                      <form class="form-inline">
-                          <div class="form-group">
-                              <label for="StackExchangeURL">StackExchange URL</label>
-                              <input type="text" class="form-control" id="StackExchangeURL" placeholder="http://example.stackexchange.com/questions/1/example-of-question" style="width: 400px;">
-                          </div>
-                           <div class="form-group">
-                               <label for="BountyAmount">Bounty Amount</label>
-                               <input type="text" class="form-control" id="BountyAmount"
-                                    value = "0.1" style="width: 400px;">
-                           </div>
-                          <span id="newQuestionResult" class="bg"></span>
-                          <span id="loading_dep" style="display:none;"><br><img src="loadingnewc.gif" alt="loading"/> Loading, please wait...</span>
-                </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal" id="newQuestionClose">Close</button>
-                <button type="button" class="btn btn-primary" id="newQuestionSubmit">ADD</button>
-              </div>
-            </div>
-          </div>
-        </div>
-    </div>
     <script src = "script.js"></script>
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
