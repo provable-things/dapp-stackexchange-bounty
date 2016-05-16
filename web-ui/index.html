@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Stackexchange Bounty Contract - Powered by Ethereum + Oraclize</title>
+	<title>Stackexchange Bounty dApp - Powered by Ethereum + Oraclize</title>
   <link rel="icon" type="image/png" href="favicon.png">
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 	<script type="text/javascript" src="../web3.min.js"></script>
@@ -184,7 +184,7 @@
               <div class="modal-body center">
                   You can become a sponsor for this question by sending a transaction with any wallet to the following Ethereum address. The transaction must have a custom gas value of 70000.
                 <div class="center" style = "margin-top:10px;margin-bottom:7px;">
-                  <input type="text" value="" id="contractAddrInput" class="form-control" style="width: 400px; display: inline-block; right: 0; left: 0; text-align: center;border-radius: 5px;-moz-border-radius:5px;border: 1px dashed #B5B5B5;background-color: #F5F5F5;" readonly onclick="this.select();"/>
+                  <input type="text" value="" id="dAppAddrInput" class="form-control" style="width: 400px; display: inline-block; right: 0; left: 0; text-align: center;border-radius: 5px;-moz-border-radius:5px;border: 1px dashed #B5B5B5;background-color: #F5F5F5;" readonly onclick="this.select();"/>
                 </div>
               </div>
               <div class="modal-footer">
@@ -265,7 +265,7 @@
    <div class="container">
         <div class="page-header">
 
-            <h3>StackExchange Bounty Contract</h3>
+            <h3>StackExchange Bounty dApp</h3>
 
             <div class="fright right">
                 <button type="button" class="btn" data-toggle="collapse" data-target="#collapsedit"
@@ -305,9 +305,9 @@
                 <div class="col-md-6">
                     <div class="form-inline">
                         <div class="form-group">
-                            <label for="contractAddr" class="control-label">Please enter the contract address:</label>
-                            <input type="text" class="form-control" id="contractAddr" style="width:400px;margin: 0 5px 0 5px;">
-                            <span class="btn btn-default" id="submitContractAddr">SUBMIT</span>
+                            <label for="dAppAddr" class="control-label">Please enter the dApp address:</label>
+                            <input type="text" class="form-control" id="dAppAddr" style="width:400px;margin: 0 5px 0 5px;">
+                            <span class="btn btn-default" id="submitdAppAddr">SUBMIT</span>
                         </div>
                     </div>
                 </div>
@@ -348,7 +348,7 @@
 
         <div class="alert alert-success" role="alert" id="end" style="display:none;">
               <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
-              This smart contract was <u>resolved</u> on the <span id="expdateinfo" class="b"></span>. At the given date the question had <span id="answer_acc" class="b"></span>, hence the goal <span id="resultcontr" class="b"></span> reached. Given that, <span id="resultsuccess"></span>
+              This smart dApp was <u>resolved</u> on the <span id="expdateinfo" class="b"></span>. At the given date the question had <span id="answer_acc" class="b"></span>, hence the goal <span id="resultcontr" class="b"></span> reached. Given that, <span id="resultsuccess"></span>
         </div>
 
         <div class="row" id="initiald">
