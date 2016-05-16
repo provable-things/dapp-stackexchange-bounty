@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
+<<<<<<< HEAD
 	<title>Stackexchange bounty contract - Powered by Ethereum + Oraclize</title>
+=======
+	<title>Stackexchange Bounty Contract - Powered by Ethereum + Oraclize</title>
+>>>>>>> working_branch
   <link rel="icon" type="image/png" href="favicon.png">
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 	<script type="text/javascript" src="web3.min.js"></script>
@@ -14,9 +18,12 @@
   <script type="text/javascript" src="https://pagedown.googlecode.com/hg/Markdown.Editor.js"></script>
   <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML-full"></script>
   <script type="text/javascript" src="MJPDEditing.js"></script>
+<<<<<<< HEAD
   <script src="http://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
   <script src="http://inacho.github.io/bootstrap-markdown-editor/dist/js/bootstrap-markdown-editor.js"></script>
+=======
+>>>>>>> working_branch
 
   <noscript>
     <style type="text/css">
@@ -74,18 +81,50 @@
     font-size: 1.2em;
   }
   .seemore {
+<<<<<<< HEAD
     text-transform: uppercase; -ms-transform: rotate(90deg); -webkit-transform: rotate(90deg); transform: rotate(90deg); position: absolute; bottom: 0; top: 0; right: 0; text-align: -webkit-left; margin-top: 28px; 
   }
   .rounded {
     background-color: #6F86FF;
     -webkit-border-radius: 17px; 
     -moz-border-radius: 17px; 
+=======
+    text-transform: uppercase;
+    -ms-transform: rotate(90deg);
+    -webkit-transform: rotate(90deg);
+    transform: rotate(90deg);
+    position: absolute;
+    bottom: 0;
+    top: 0;
+    right: 0;
+    text-align:
+    -webkit-left;
+    margin-top: 28px;
+  }
+  .rounded {
+    background-color: #6F86FF;
+    -webkit-border-radius: 17px;
+    -moz-border-radius: 17px;
+>>>>>>> working_branch
     border-radius: 17px;
     padding: 4px 8px 4px 12px;
     color: #FFF;
   }
   .playedit {
+<<<<<<< HEAD
     font-size: 2em; vertical-align: middle; float: right; top: 0; bottom: 0; position: absolute; right: 5px; margin-top: 14px;
+=======
+    font-size: 2em;
+    vertical-align:
+    middle;
+    float:
+    right;
+    top: 0;
+    bottom: 0;
+    position: absolute;
+    right: 5px;
+    margin-top: 14px;
+>>>>>>> working_branch
   }
   .iconsite {
     text-align: center;
@@ -101,12 +140,17 @@
     height: 45px;
   }
   </style>
+<<<<<<< HEAD
         <script>
+=======
+   <script>
+>>>>>>> working_branch
             MathJax.Hub.Config({"HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"], linebreaks: { automatic:true }, EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50) },
                 tex2jax: { inlineMath: [ ["$", "$"], ["\\\\(","\\\\)"] ], displayMath: [ ["$$","$$"], ["\\[", "\\]"] ], processEscapes: true, ignoreClass: "tex2jax_ignore|dno" },
                 TeX: {  noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } }, Macros: { href: "{}" } },
                 messageStyle: "none"
             });
+<<<<<<< HEAD
         </script>  
 </head>
 <body>
@@ -876,6 +920,297 @@ function reset(){
   ga('send', 'pageview');
 
 </script>
+=======
+    </script>
+        <!-- <script>
+            MathJax.Hub.Config({
+                    "HTML-CSS":
+                    {
+                        preferredFont: "TeX",
+                        availableFonts: ["STIX","TeX"],
+                        linebreaks: { automatic:true },
+                        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+                    },
+                    tex2jax:
+                    {
+                        inlineMath: [ ["$", "$"], ["\\\\(","\\\\)"] ],
+                        displayMath: [ ["$$","$$"], ["\\[", "\\]"] ],
+                        processEscapes: true,
+                        ignoreClass: "tex2jax_ignore|dno"
+                    },
+                    TeX:
+                    {
+                        noUndefined:
+                        {
+                            attributes:
+                                {
+                                    mathcolor: "red",
+                                    mathbackground: "#FFEEEE",
+                                    mathsize: "90%"
+                                }
+                        },
+                        Macros: { href: "{}" }
+                    },
+                    messageStyle: "none"
+            });
+        </script> -->
+
+</head>
+<body>
+    <div style="position: absolute; left: 0; top: 0; padding: 5px 0 0 5px; font-size: 1.05em;" id="bback">
+      <a href="http://dapps.oraclize.it/" style="border-bottom: 1px dotted #2196F3; text-decoration: none;">
+          <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+          Ðapps list
+      </a>
+    </div>
+
+    <span class="active_javascript center" style="display:none;">
+       Javascript is required, please enable it
+   </span>
+
+   <div class="container">
+<!-- Modal -->
+        <div class="modal fade" id="sponsorQuestionDiv"
+            tABIndex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">Sponsor this question</h4>
+              </div>
+              <div class="modal-body center">
+                  You can become a sponsor for this question by sending a transaction with any wallet to the following Ethereum address. The transaction must have a custom gas value of 40000.
+                <div class="center" style = "margin-top:10px;margin-bottom:7px;">
+                  <input type="text" value="" id="contractAddrInput" class="form-control" style="width: 400px; display: inline-block; right: 0; left: 0; text-align: center;border-radius: 5px;-moz-border-radius:5px;border: 1px dashed #B5B5B5;background-color: #F5F5F5;" readonly onclick="this.select();"/>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="page-header">
+
+            <h3>StackExchange Bounty Contract</h3>
+
+            <div class="fright right">
+                <button type="button" class="btn" data-toggle="collapse" data-target="#collapsedit"
+                    id="buttoncollapseid">
+                    Advanced Settings
+                </button>
+                <div style="margin-top:7px;"></div>
+                <span id="arrowifdisabled"></span>
+
+                <button type="button" class="btn btn-info" style="display:none;"
+                    data-target="#addNewQuestionDiv" id="addNewQuestionBtn"
+                    title = "Please connect to your local unlocked node before"
+                    data-toggle="modal" disabled >
+                    Add a new question
+                </button>
+
+                <button type="button" class="btn btn-success" style="display:none;"
+                    data-target="#sponsorQuestionDiv" id="sponsorQuestionBtn"
+                    data-toggle="modal" disabled >
+                    Sponsor this question
+                </button>
+            </div>
+
+            <p class="lead">
+                Bounties for StackExchange Questions<br>
+            </p>
+
+            <span class="text-muted">Powered by
+                <a href="https://www.ethereum.org/" target="_blank">Ethereum</a> +
+                <a href="http://www.oraclize.it" target="_blank">Oraclize</a>
+            </span>
+
+        </div>
+
+        <div id="collapsedit" class="collapse">
+             <div class="row">
+                <div class="col-md-6">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <label for="contractAddr" class="control-label">Please enter the contract address:</label>
+                            <input type="text" class="form-control" id="contractAddr" style="width:400px;margin: 0 5px 0 5px;">
+                            <span class="btn btn-default" id="submitContractAddr">SUBMIT</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="well" style="overflow: auto;">
+
+                        <div class="center" style="margin-bottom:7px;margin-top:-10px;">
+                            <div class="btn-group" role="group" aria-label="..." id="btgr" style="display:none;"></div>
+                        </div>
+
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <label for="nodeIP" class="control-label">Connect to node:</label>
+                                <input type="text" class="form-control" id = "nodeIP" style="width:200px;margin: 0 5px 0 5px;" value = "http://178.62.29.206:8082/">
+                      <!--<input type="text" class="form-control" id="nodeIP" style="width:200px;margin: 0 5px 0 5px;" value="http://localhost:8545">-->
+                                <span class="btn btn-default" id="submitNodeIP">CONNECT</span>
+                            </div>
+                        </div>
+
+                        <div class="fleft" id="connected" style="display:none;">
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Connected
+                        </div>
+
+                        <div class="fleft" id="notconnected" style="display:none;">
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Error, not connected
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-bottom:4px"></div>
+
+        <div class="alert alert-info" role="alert" id="start" style="display:none;">
+        </div>
+
+        <div class="alert alert-success" role="alert" id="end" style="display:none;">
+              <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
+              This smart contract was <u>resolved</u> on the <span id="expdateinfo" class="b"></span>. At the given date the question had <span id="answer_acc" class="b"></span>, hence the goal <span id="resultcontr" class="b"></span> reached. Given that, <span id="resultsuccess"></span>
+        </div>
+
+        <div class="row" id="initiald">
+            <div class="col-md-8 col-md-offset-2 center" id="content_init">
+                <span id="loadingQuestion"><img src="loadingnewc.gif" alt="loading"/> Loading, please wait...</span>
+                <h4 class="center" style="display:none;" id="content_title">List of All Questions</h4><br>
+                <div id="questionList"></div>
+            </div>
+        </div>
+
+        <div class="row" id="content" style="display:none;">
+
+            <div class="col-md-3">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Site</h3>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <img src="" alt="site" id="imgfav"/>
+                            <span id="siteinfo">...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-primary" id="first_panel">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Total Bounty</h3>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <span id="tot_b">...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id = 'panel-expiry-date' class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Expiry Date</h3>
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <span id="expiry-date"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-9" id="question_show" style="display:none;">
+                <div style="-moz-border-radius: 5px; -webkit-border-radius: 5px; -khtml-border-radius: 5px; border-radius: 5px; border: 1px solid #ADADAD;padding:10px;margin-bottom: 15px;">
+                    <h5 id="q_title"></h5>
+                    <hr>
+                    <div id="wmd-button-bar-customsuffix" style="display: none;"></div>
+                    <span id="wmd-preview-customsuffix"></span>
+                    <textarea id="wmd-input-customsuffix" style="display: none" type="hidden"></textarea>
+                    <span id="place_h" style="display:none;"></span>
+                    <div class="right" style="margin-top:-5px;">
+                        <span id="q_owner"></span>
+                    </div>
+                </div>
+                <span id="lasthr"></span>
+                <br><p></p>
+                <h4>Sponsors list:</h4>
+                <table class="table table-bordered" id="tab">
+                    <thead>
+                        <tr id="columntitle">
+                            <th>#</th>
+                            <th>Address</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div> <!-- /container -->
+    <br>
+    <hr>
+
+    <footer class="footer">
+          <div class="container">
+            <p class="text-muted center">Designed by &nbsp;
+                <a href="http://www.oraclize.it" target="_blank">
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAPCAYAAADphp8SAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6MEU2RUUyQjNDMzRFMTFFNTk3MDRCNTJBQTk2N0M4NUIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6MEU2RUUyQjRDMzRFMTFFNTk3MDRCNTJBQTk2N0M4NUIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDowRTZFRTJCMUMzNEUxMUU1OTcwNEI1MkFBOTY3Qzg1QiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDowRTZFRTJCMkMzNEUxMUU1OTcwNEI1MkFBOTY3Qzg1QiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PuHu1SIAAAKmSURBVHjadFNLTxNRGD3z7LTFNvQBFTGgEpGHEg3qbzBuSExM2GjizqU/wV/gloSdJq5MXBlZGDcuDBEf0IgmRKDQQAGpfVDotJ0Zz3dpjZJ4mzN3Ovd+5zvf+e7V8P/RQwwSo8QVTdPGDF0fbnlemP+XiJfEHLEqm7V2kCmbiZvEpK7r47HYqaFUKpHI9KTRS5zpyyC/tY3Xc28xMTGG9dwmCoXdA+5/RzwRginbth8PDpy9nOlNa6czvUinkojHY4hEHBi6gYA/0zSxVdhBdyKOO1O3UasdYmu70JX9+v3Wh4UvI6ZhGLPTd6dSI5cukpMhfgDP9+ETzWYLTbRwLF1DsVhCJBzm9yZYKs6fG0AymcCnz9mYyQ9BItGNVqul8N9BEyrVKlVGSKIjCAImC5DL5eG6blFn8FG5UlEZTg56Bcsy1bsorFSqiEaFqLOuIbeRl9dNnY96tXIA/QSRkEigmCpDShZfpDQ6oBK7bgNr6xuynBWimgRo+r9EtmVhMbuMZ89fKK8830O97rK0sDKf3qL4q4TdvZ+yfV50l0ssTbIoK9rKmvTrxvWrGB8dRihkw200xAuEHYf+QBFJWbTG7RDtlcsV6IauFsVwz/M4e2q2bEsRt9ipBpU5JFLdJdnKijqLy8SaEOWFeWb2KRrMKgQ8vfCki5y7olE8uD+tygsCX6mTrknytn9vpBdCtGIaJiavTSBk2zBMQx0+6ZbMEhgJO9jfLypljhNSa6vrOdQOD+XTq87VWJJyhi4MoiedUir+DDkrwbGxYrZ0TsiPjupYXJKKsE0sdO5anPjR39+X7OP1kO4pReaxIkGYKgo7u3g//1FdH0lcYmk8lDOMffj3pb1HPCK6CKsNUSvHwyekM2wtcm1zs8Q3YpFoCMFvAQYAe9MxYsjZmN8AAAAASUVORK5CYII=
+                    " alt="Oraclize"> Oraclize</a></p>
+          </div>
+    </footer>
+<!-- Modal -->
+    <div class="modal fade" id="addNewQuestionDiv" tABIndex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Add a new question</h4>
+                </div>
+                <div class="modal-body center">
+                  Please paste here the URL of the question you want to send a bounty to
+                  <div class="center" style="margin-top:10px;margin-bottom:7px;">
+                      <form class="form-inline">
+                          <div class="form-group">
+                              <label for="StackExchangeURL">StackExchange URL</label>
+                              <input type="text" class="form-control" id="StackExchangeURL" placeholder="http://example.stackexchange.com/questions/1/example-of-question" style="width: 400px;">
+                          </div>
+                           <div class="form-group">
+                               <label for="BountyAmount">Bounty Amount</label>
+                               <input type="text" class="form-control" id="BountyAmount"
+                                    value = "0.1" style="width: 400px;">
+                           </div>
+                          <span id="newQuestionResult" class="bg"></span>
+                          <span id="loading_dep" style="display:none;"><br><img src="loadingnewc.gif" alt="loading"/> Loading, please wait...</span>
+                </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="newQuestionClose">Close</button>
+                <button type="button" class="btn btn-primary" id="newQuestionSubmit">ADD</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <script src = "script.js"></script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','http://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-59380873-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+>>>>>>> working_branch
 
 </body>
 </html>
