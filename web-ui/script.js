@@ -207,6 +207,8 @@
             questionDetails(contractAddr);
         }
         else {
+            $('#toastm').show();
+            $('#toastm').addClass('animated fadeIn');
             $('#content_title').show();
             $('#loadingQuestion').hide();
             $('#content_title').addClass('animated fadeIn');
@@ -385,6 +387,12 @@
             if(question_start!= 0 && questionsBalance.length==numberOfQuestions){
                 $('#morequestion').attr('onClick','');
                 $('#morequestion').attr('disabled','');
+            }
+
+            if(question_start!=0 && questionsBalance.length>=6 && questionsBalance.length!=numberOfQuestions){
+                if(numberOfQuestions!=10){
+                    questionsList(false,question_start-1);
+                }
             }
 
             if(question_start!= 0 && i==(numberOfQuestions-question_start)){

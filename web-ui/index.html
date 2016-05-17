@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Stackexchange Bounty dApp - Powered by Ethereum + Oraclize</title>
+	<title>StackExchange Bounty ÐApp - Powered by Ethereum + Oraclize</title>
   <link rel="icon" type="image/png" href="favicon.png">
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-	<script type="text/javascript" src="../web3.min.js"></script>
+	<script type="text/javascript" src="web3.min.js"></script>
   <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.6/paper/bootstrap.min.css">
   <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css">
@@ -124,39 +124,6 @@
                 messageStyle: "none"
             });
     </script>
-        <!-- <script>
-            MathJax.Hub.Config({
-                    "HTML-CSS":
-                    {
-                        preferredFont: "TeX",
-                        availableFonts: ["STIX","TeX"],
-                        linebreaks: { automatic:true },
-                        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
-                    },
-                    tex2jax:
-                    {
-                        inlineMath: [ ["$", "$"], ["\\\\(","\\\\)"] ],
-                        displayMath: [ ["$$","$$"], ["\\[", "\\]"] ],
-                        processEscapes: true,
-                        ignoreClass: "tex2jax_ignore|dno"
-                    },
-                    TeX:
-                    {
-                        noUndefined:
-                        {
-                            attributes:
-                                {
-                                    mathcolor: "red",
-                                    mathbackground: "#FFEEEE",
-                                    mathsize: "90%"
-                                }
-                        },
-                        Macros: { href: "{}" }
-                    },
-                    messageStyle: "none"
-            });
-        </script> -->
-
 </head>
 <body>
     <div style="position: absolute; left: 0; top: 0; padding: 5px 0 0 5px; font-size: 1.05em;" id="bback">
@@ -169,6 +136,39 @@
     <span class="active_javascript center" style="display:none;">
        Javascript is required, please enable it
    </span>
+
+    <div style="position: fixed; top: 0; right: 0; z-index: 10000; padding: 10px; background-color: rgba(0, 0, 0, 0.55); color: #FFF; border: 1px solid #737373; margin: 5px 5px 0 0;display:none;width: 300px;" id="toastm">
+            <button type="button" class="close" aria-label="Close" style="position:absolute;right: 5px; top: 5px;" onclick="$('#toastm').addClass('animated fadeOut');$('#toastm').remove();"><span aria-hidden="true">&times;</span></button>
+    <div class="center">
+    <span style="font-size:1.2em;">HOW IT WORKS</span>
+    </div>
+Use this <a href="https://github.com/oraclize/dapp-stackexchange-bounty" target="_blank" style="color:#FFF !important;text-decoration: underline;">opensource</a> DApp to set a bounty for StackExchange questions you care about.
+<div class="center">
+    <a href="#" class="btn btn-primary btn-sm" style="margin-top:5px;width: 90%; overflow: hidden;" data-toggle="modal" data-target="#howItWorks">Want to know more? Click here.</a>
+    </div>
+    </div>
+
+  <div class="modal fade" id="howItWorks" tabindex="-1" role="dialog" aria-labelledby="howItWorks">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="howItWorks">How it works</h4>
+        </div>
+        <div class="modal-body">
+Using this DApp is easy, once a given question is funded this is what happens:
+  <ol>
+    <li>funds are held in the smartcontract and the presence of a resolved answer is checked once per day</li>
+    <li>if no resolved answer is there by the expiry date, sponsors get their money back
+    <li>if a resolved answer is there, the author automatically gets paid (eth address <a href="http://ethereum.stackexchange.com/users/37/thomas-bertani?tab=profile" target="_blank">needs to be set in its profile location field</a>) 
+  </ol>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 <!-- Modal -->
         <div class="modal fade" id="sponsorQuestionDiv"
@@ -184,7 +184,7 @@
               <div class="modal-body center">
                   You can become a sponsor for this question by sending a transaction with any wallet to the following Ethereum address. The transaction must have a custom gas value of 70000.
                 <div class="center" style = "margin-top:10px;margin-bottom:7px;">
-                  <input type="text" value="" id="dAppAddrInput" class="form-control" style="width: 400px; display: inline-block; right: 0; left: 0; text-align: center;border-radius: 5px;-moz-border-radius:5px;border: 1px dashed #B5B5B5;background-color: #F5F5F5;" readonly onclick="this.select();"/>
+                  <input type="text" value="" id="contractAddrInput" class="form-control" style="width: 400px; display: inline-block; right: 0; left: 0; text-align: center;border-radius: 5px;-moz-border-radius:5px;border: 1px dashed #B5B5B5;background-color: #F5F5F5;" readonly onclick="this.select();"/>
                 </div>
               </div>
               <div class="modal-footer">
@@ -265,7 +265,7 @@
    <div class="container">
         <div class="page-header">
 
-            <h3>StackExchange Bounty dApp</h3>
+            <h3>StackExchange Bounty ÐApp</h3>
 
             <div class="fright right">
                 <button type="button" class="btn" data-toggle="collapse" data-target="#collapsedit"
@@ -305,9 +305,9 @@
                 <div class="col-md-6">
                     <div class="form-inline">
                         <div class="form-group">
-                            <label for="dAppAddr" class="control-label">Please enter the dApp address:</label>
-                            <input type="text" class="form-control" id="dAppAddr" style="width:400px;margin: 0 5px 0 5px;">
-                            <span class="btn btn-default" id="submitdAppAddr">SUBMIT</span>
+                            <label for="contractAddr" class="control-label">Please enter the contract address:</label>
+                            <input type="text" class="form-control" id="contractAddr" style="width:400px;margin: 0 5px 0 5px;">
+                            <span class="btn btn-default" id="submitcontractAddr">SUBMIT</span>
                         </div>
                     </div>
                 </div>
@@ -348,7 +348,7 @@
 
         <div class="alert alert-success" role="alert" id="end" style="display:none;">
               <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
-              This smart dApp was <u>resolved</u> on the <span id="expdateinfo" class="b"></span>. At the given date the question had <span id="answer_acc" class="b"></span>, hence the goal <span id="resultcontr" class="b"></span> reached. Given that, <span id="resultsuccess"></span>
+              This smart contract was <u>resolved</u> on the <span id="expdateinfo" class="b"></span>. At the given date the question had <span id="answer_acc" class="b"></span>, hence the goal <span id="resultcontr" class="b"></span> reached. Given that, <span id="resultsuccess"></span>
         </div>
 
         <div class="row" id="initiald">
