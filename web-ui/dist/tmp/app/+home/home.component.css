@@ -1,0 +1,93 @@
+:host {
+    display: block;
+    padding: 16px 0px;
+}
+
+@media (max-width: 767px) {
+    .container-fluid {
+        padding: 0;
+    }
+}
+
+.dim {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.question-panel {
+    padding: 10px;
+    position: relative;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    min-height: 120px;
+}
+
+.question-panel:hover {
+    background: rgba(0,0,0,0.1);
+}
+
+.question-info {
+    margin-left: 10px;
+    margin-top: 5px;
+    width: 75%;
+}
+
+.question-title {
+    font-size: 20px;
+    padding-right: 5px;
+    display: block;
+}
+
+.question-owner {
+    display: inline-block;
+    font-size: 14px;
+    margin-left: 10px;
+}
+
+.site-image {
+    display: inline-block;
+    width: 50px;
+    font-size: 10px;
+    margin-right: 15px;
+    text-align: center;
+}
+
+.site-image > img {
+    margin-top: 15px;
+    width: 32px;
+}
+
+#sidebar {
+    display: block;
+}
+
+@media (min-width: 768px) {
+    #sidebar {
+        position: fixed;
+        right: 16px;
+    }
+}
+
+#wrapper {
+    padding: 20px;
+}
+
+.sidebar-info {
+    padding: 20px;
+    overflow-x: auto;
+}
+
+.sidebar-info > span {
+    font-size: 14px;
+}
+
+#tutorial {
+    position: fixed;
+    z-index: 99999;
+    opacity: 1;
+    left: 50%;
+    top: 25%;
+    -webkit-transform: translate(-50%, 0);
+            transform: translate(-50%, 0);
+}

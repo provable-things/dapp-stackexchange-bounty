@@ -1,0 +1,73 @@
+<nav class="container-fluid" [class.dim]="showTutorial()">
+    <div id="app-title">
+        <div class="clickme background-ease-300" (click)="home()">STACKEXCHANGE BOUNTIES</div>
+        <p>Bounties for StackExchange Questions</p>
+        <span>Powered by <a href="https://www.ethereum.org/" target="_blank">Ethereum</a> + <a href="http://www.oraclize.it/" target="_blank">Oraclize</a></span>
+    </div>
+    <div class="navbar-button clickme background-ease-300 noselect" data-toggle="modal" data-target="#settingsModal"><i class="fa fa-gears"></i> Advanced settings</div>
+    <div id="newQ" class="navbar-button clickme background-ease-300 noselect" [class.noclick]="!web3Service.currentAcc" data-toggle="modal" data-target="#newQModal"><i class="fa fa-pencil"></i> Submit a new question</div>
+</nav>
+<div id="settingsModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-body">
+            <div class="contract">
+                <span>StackΞxchange Bounty contract address:</span>
+                <br>
+                <input type="text" name="contract" [(ngModel)]="web3Service.currentAddr">
+                <button class="btn btn-default">SET</button>
+            </div>
+            <div class="node">
+                <span>Connect to node:</span>
+                <input type="text" name="node" [(ngModel)]="web3Service.currentNode">
+                <button class="btn btn-default" (click)="web3Service.connectToNode();">CONNECT</button>
+                <br>
+                <span *ngIf="web3Service.isConnected"><i class="fa fa-check" aria-hidden="true"></i> Connected</span>
+                <span *ngIf="!web3Service.isConnected"><i class="fa fa-times" aria-hidden="true"></i> Error: Not connected</span>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+<div id="newQModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="label">Submit a new question</h4>
+            </div>
+            <div class="modal-body">
+                <p *ngIf="!web3Service.currentAcc" id="submit-warning"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i><br>Please connect to a node with an unlocked account (advanced settings)</p>
+                <form *ngIf="web3Service.currentAcc">
+                    <div class="center">
+                        <label for="url">Stack exchange URL</label>
+                        <input [(ngModel)]="url" name="url" type="text" id="url" class="form-control" placeholder="http://example.stackexchange.com/questions/1/question-title" required>
+                        <label for="amount">Bounty amount (Ξ)</label>
+                        <input [(ngModel)]="amount" name="amount" type="text" id="amount" class="form-control" placeholder="0.1" autocomplete="off" required>
+                        <span id="exrate" *ngIf="amountIsNumber()">= ~$<span>{{(amount*questionsService.rate).toFixed(2)}}</span></span>
+                    </div>
+                    <input type="submit" class="btn btn-default" data-dismiss="modal" aria-label="Close" data-toggle="modal" data-target="#statusModal" (click)="addQuestion(url, amount)" value="Submit">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="statusModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="label">Submission status</h4>
+            </div>
+            <div class="modal-body" id="question-status">
+                <div *ngIf="questionSuccess" class="success"><i class="fa fa-check" aria-hidden="true"></i> Got it! If you're using MetaMask, please login to your vault and accept the transaction. Refresh to see if it's been posted yet.</div>
+                <div *ngIf="!questionSuccess" class="danger"><i class="fa fa-times" aria-hidden="true"></i> We had an issue with that question. Make sure you're submitting a valid URL and giving an amount.</div>
+                <button class="btn btn-default" *ngIf="!questionSuccess" data-dismiss="modal" aria-label="Close" data-toggle="modal" data-target="#newQModal">Try again</button>
+            </div>
+        </div>
+    </div>
+</div>

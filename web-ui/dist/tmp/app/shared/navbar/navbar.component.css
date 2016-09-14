@@ -1,0 +1,102 @@
+:host {
+    display: block;
+    padding: 0;
+    border-color: #e1e1e1;
+    border-style: solid;
+    border-width: 0 0 1px;
+}
+
+.dim {
+    opacity: 0.5;
+    overflow-y: hidden;
+    pointer-events: none;
+}
+
+#app-title {
+    line-height: 48px;
+    padding: 15px;
+    display: inline-block;
+}
+
+#app-title > div {
+    font-size: 25px;
+}
+
+#app-title > div:hover {
+    background: rgba(0,0,0,0.3);
+}
+
+#app-title > p {
+    margin-top: 5px;
+    margin-bottom: 0;
+    font-size: 13px;
+}
+
+#app-title a {
+    float: none;
+    color: #106cc8;
+    margin: 0;
+}
+
+@media (max-width: 479px) {
+    #app-title {
+        text-align: center;
+        display: block;
+        width: 100%;
+    }
+}
+
+@media (max-width: 767px) {  
+    .navbar-button {
+        width: 100%;
+        float: none !important;
+        margin-bottom: 10px;
+    }
+}
+
+.navbar-button {
+    float: right;
+    text-align: center;
+    padding: 15px;
+    margin-top: 10px;
+    margin-right: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+.navbar-button:hover {
+    background: rgba(0,0,0,0.3);
+}
+
+#newQ:hover {
+    background: rgba(192,216,144,0.3);
+}
+
+#settingsModal input {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+#settingsModal button {
+    float: right;
+    width: 30%;
+}
+
+.modal-body > div {
+     margin-bottom: 20px;
+}
+
+.modal-body input {
+    margin-bottom: 15px;
+}
+
+#submit-warning {
+    text-align: center;
+}
+
+#question-status > div {
+    padding: 10px;
+}
+
+#exrate {
+    float: right;
+}

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="/stackexchange-v2/">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>STACKΞXCHANGE BOUNTIES</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script type="text/javascript" src="js/web3.js"></script>
+  <script src="https://use.fontawesome.com/2398566cff.js"></script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  </script>
+  <script type="text/javascript" async
+    src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+  </script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.6/paper/bootstrap.min.css">
+  <!-- inject:css -->
+  <link rel="stylesheet" href="/stackexchange-v2/dist/dev/css/main.css?1472829923668">
+  <!-- endinject -->
+</head>
+<body>
+
+  <sd-app>Loading...</sd-app>
+
+  <script>
+  // Fixes undefined module function in SystemJS bundle
+  function module() {}
+  </script>
+
+  <!-- shims:js -->
+  <script src="/stackexchange-v2/node_modules/core-js/client/shim.min.js?1472829923663"></script>
+  <script src="/stackexchange-v2/node_modules/systemjs/dist/system.src.js?1472829923664"></script>
+  <!-- endinject -->
+
+  
+  <script>
+    System.config({
+  "defaultJSExtensions": true,
+  "packageConfigPaths": [
+    "/node_modules/*/package.json",
+    "/node_modules/**/package.json",
+    "/node_modules/@angular/*/package.json"
+  ],
+  "paths": {
+    "app/main": "/stackexchange-v2/app/main",
+    "@angular/common": "node_modules/@angular/common/bundles/common.umd.js",
+    "@angular/compiler": "node_modules/@angular/compiler/bundles/compiler.umd.js",
+    "@angular/core": "node_modules/@angular/core/bundles/core.umd.js",
+    "@angular/forms": "node_modules/@angular/forms/bundles/forms.umd.js",
+    "@angular/http": "node_modules/@angular/http/bundles/http.umd.js",
+    "@angular/platform-browser": "node_modules/@angular/platform-browser/bundles/platform-browser.umd.js",
+    "@angular/platform-browser-dynamic": "node_modules/@angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd.js",
+    "@angular/router": "node_modules/@angular/router/index.js",
+    "rxjs/*": "node_modules/rxjs/*",
+    "app/*": "/app/*",
+    "*": "node_modules/*"
+  },
+  "packages": {
+    "rxjs": {
+      "defaultExtension": "js"
+    }
+  }
+})
+  </script>
+  
+
+  <!-- libs:js -->
+  <script src="/stackexchange-v2/node_modules/zone.js/dist/zone.js?1472829923666"></script>
+  <script src="/stackexchange-v2/node_modules/rxjs/bundles/Rx.js?1472829923666"></script>
+  <!-- endinject -->
+
+  <!-- inject:js -->
+  <!-- endinject -->
+
+  
+  <script>
+  System.import('app/main')
+    .catch(function (e) {
+      console.error(e,
+        'Report this error at https://github.com/mgechev/angular2-seed/issues');
+    });
+  </script>
+  
+
+</body>
+</html>

@@ -1,0 +1,44 @@
+<div id="main-tainer" class="container-fluid" [class.dim]="showTutorial()">
+    <div class="col-xs-12 col-sm-4" id="sidebar">
+        <div id="wrapper" class="panel panel-default">
+            <p *ngIf="!web3Service.currentAcc" class="danger sidebar-info"><i class="fa fa-times fa-fw" aria-hidden="true"></i> No unlocked accounts found. Please connect one in advanced settings.</p>
+            <p *ngIf="web3Service.currentAcc" class="success sidebar-info"><i class="fa fa-check fa-fw" aria-hidden="true"></i> Found an unlocked account:<br>
+                <span>{{web3Service.currentAcc}}</span>
+            </p>
+            <p *ngIf="web3Service.addingQuestion" class="success sidebar-info"><i class="fa fa-refresh fa-spin fa-fw"></i> Submitting your question.</p>
+            <button id="sort" class="clickme btn btn-default" (click)="questionsService.toggleSort()">Sort by {{questionsService.sortingMethod}}</button>
+        </div>
+    </div>
+    <div class="container col-xs-12 col-sm-8">
+        <div *ngFor="let question of getQuestions()" class="panel panel-default question-panel background-ease-300 clickme price-container" (click)="gotoQuestion(question)">
+            <div class="site-image">
+                <img src="http://cdn.sstatic.net/Sites/{{question.site}}/img/favicon.ico">
+                <span>{{question.site}}</span>
+            </div>
+            <div class="question-info">
+                <div class="question-title" [MathJax]="question.title"></div>
+                <span class="question-prices">
+                    <span class="label label-success price-usd">~$<span>{{(question.totalBounty*questionsService.rate).toFixed(2)}}</span></span>
+                    <span class="label label-primary price-eth">~{{(question.totalBounty).toFixed(2)}}Ξ</span>
+                </span>
+                <div class="label label-{{labelType(question)}}">{{question.text}} {{question.info}}</div>
+                <div class="question-owner">Asked by: {{question.owner.display_name}}</div>
+            </div>
+        </div>
+        <div *ngIf="!questionsService.isReady" class="horiz-center-container">
+            <i class="fa fa-refresh fa-spin fa-3x fa-fw"></i>
+            <span class="sr-only">Loading...</span>
+        </div>
+        <button *ngIf="questionsService.isReady" id="loadmore" class="clickme btn btn-default" (click)="loadMore()">{{loadMoreText}}</button>
+    </div>
+</div>
+<div *ngIf="showTutorial()" id="tutorial" class="panel panel-default col-xs-10 col-xs-push-1 col-sm-6">
+    <button type="button" class="close" (click)="noTutorial()">
+        <span aria-hidden="true">×</span>
+    </button>
+    <div class="panel-body">
+        <span [innerHtml]="tutorialText()"></span>
+        <br><br>
+        <button class="btn btn-default" (click)="nextSection()">Next</button>
+    </div>
+</div>

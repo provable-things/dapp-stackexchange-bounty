@@ -1,0 +1,88 @@
+<div *ngIf="question" class="container-fluid"> 
+    <div class="panel-container col-xs-12 col-sm-4 col-md-3">
+        <button *ngIf="question.info !== 'Expired' && question.info !== 'Completed'" class="btn btn-success button-sponsor" data-toggle="modal" data-target="#addrModal">Sponsor this question</button>
+        <button *ngIf="question.info === 'Completed'" class="btn btn-info button-sponsor">Question answered!</button>
+        <button *ngIf="question.info === 'Expired'" class="btn btn-danger button-sponsor">Question expired</button>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Site
+            </div>
+            <div class="panel-body" id="panel-site">
+                <img src="http://cdn.sstatic.net/Sites/{{question.site}}/img/favicon.ico">
+                <strong>{{question.site}}</strong>.stackexchange.com
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Total Bounty
+            </div>
+            <div class="panel-body price-container">
+                <span class="price-usd">~$<span>{{(question.totalBounty*questionsService.rate).toFixed(2)}}</span></span>
+                <span class="price-eth">~{{(question.totalBounty).toFixed(2)}}Ξ</span>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Bounty Expiry Date
+            </div>
+            <div class="panel-body">
+                {{parseDate(question.expiryDate)}}
+            </div>
+        </div>
+    </div>
+    <div class="question-container col-xs-12 col-sm-8 col-md-9">
+        <div class="panel panel-default">
+            <div class="panel-heading" [innerHtml]="question.title"></div>
+            <div class="panel-body" id="question-body" [MathJax]="question.body"></div>
+            <div id="owner">Asked by <img id="profile-image" src="{{question.owner.profile_image}}"><a href="{{question.owner.link}}" target="_blank"> {{question.owner.display_name}}</a></div>
+        </div>
+        <a href="{{question.link}}" target="_blank">
+            <div id="answers" class="panel panel-default background-ease-300">
+                See the answers <i class="fa fa-external-link" aria-hidden="true"></i>
+            </div>
+        </a>
+        <div id="sponsors">
+            <h5>Sponsors:</h5>
+            <table class="table table-bordered price-container">
+                <thead>
+                <tr>
+                    <th>amount</th>
+                    <th>address</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let sponsor of question.sponsors">
+                    <td>
+                        <span class="price-usd">~$<span>{{(sponsor.amount*questionsService.rate).toFixed(2)}}</span></span>
+                        <span class="price-eth">~{{(sponsor.amount).toFixed(2)}}Ξ</span>
+                    </td>
+                    <td>{{sponsor.address}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div *ngIf="!question" class="horiz-center-container">
+    <i class="fa fa-refresh fa-spin fa-3x fa-fw"></i>
+    <span class="sr-only">Loading...</span>
+</div>
+<div *ngIf="question" id="addrModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+        <h4 *ngIf="question.info !== 'Expired' && question.info !== 'Completed'" class="modal-title" id="myModalLabel">Sponsor this question</h4>
+        <h4 *ngIf="question.info === 'Completed'" class="modal-title" id="myModalLabel">Question answered!</h4>
+      </div>
+      <div *ngIf="question.info !== 'Expired' && question.info !== 'Completed'" class="modal-body">
+        <p>You can become a sponsor for this question by sending a transaction with any wallet to the following Ethereum address. The transaction must have a custom gas value of 70000.<p>
+        <div class="center" style="margin-top:10px;margin-bottom:7px;">
+            <input type="text" value="" id="contractAddrInput" class="form-control" readonly="" onclick="this.select();" [(ngModel)]="question.contractAddr">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

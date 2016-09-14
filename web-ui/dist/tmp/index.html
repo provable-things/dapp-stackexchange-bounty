@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="<%= APP_BASE %>">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title><%= APP_TITLE %></title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script type="text/javascript" src="js/web3.js"></script>
+  <script src="https://use.fontawesome.com/2398566cff.js"></script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  </script>
+  <script type="text/javascript" async
+    src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+  </script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.6/paper/bootstrap.min.css">
+  <!-- inject:css -->
+  <!-- endinject -->
+</head>
+<body>
+
+  <sd-app>Loading...</sd-app>
+
+  <script>
+  // Fixes undefined module function in SystemJS bundle
+  function module() {}
+  </script>
+
+  <!-- shims:js -->
+  <!-- endinject -->
+
+  <% if (ENV === 'dev') { %>
+  <script>
+    System.config(<%=
+      JSON.stringify(SYSTEM_CONFIG, null, 2)
+    %>)
+  </script>
+  <% } %>
+
+  <!-- libs:js -->
+  <!-- endinject -->
+
+  <!-- inject:js -->
+  <!-- endinject -->
+
+  <% if (ENV === 'dev') { %>
+  <script>
+  System.import('<%= BOOTSTRAP_MODULE %>')
+    .catch(function (e) {
+      console.error(e,
+        'Report this error at https://github.com/mgechev/angular2-seed/issues');
+    });
+  </script>
+  <% } %>
+
+</body>
+</html>

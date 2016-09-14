@@ -1,0 +1,64 @@
+:host {
+    display: block;
+    padding: 16px 0;
+}
+
+@media (max-width: 767px) {
+    .container-fluid {
+        padding: 0;
+    }
+}
+
+#panel-site {
+    font-size: 14px;
+}
+
+.button-sponsor {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+#answers {
+    cursor: pointer;
+    padding: 15px;
+    text-align: center;
+}
+
+#answers:hover {
+    background: rgba(0,0,0,0.1);
+}
+
+#owner {
+    padding: 10px;
+}
+
+#owner > a {
+    cursor: pointer;
+}
+
+#profile-image {
+    width: 20px;
+}
+
+#sponsors {
+    overflow: auto;
+}
+
+#contractAddrInput {
+    display: inline-block; 
+    right: 0; 
+    left: 0; 
+    text-align: center;
+    border-radius: 5px;
+    -moz-border-radius:5px;
+    border: 1px dashed #B5B5B5;
+    background-color: #F5F5F5;
+}
+
+#addrModal .modal-body {
+    text-align: center;
+}
+
+#question-body {
+    overflow-x: auto;
+}

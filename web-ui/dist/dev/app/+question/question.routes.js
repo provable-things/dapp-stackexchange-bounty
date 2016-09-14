@@ -1,0 +1,10 @@
+"use strict";
+var index_1 = require('./index');
+exports.QuestionRoutes = [
+    {
+        path: 'questions/:site/:id',
+        component: index_1.QuestionComponent
+    }
+];
+
+//# sourceMappingURL=data:application/json;charset=utf8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImFwcC8rcXVlc3Rpb24vcXVlc3Rpb24ucm91dGVzLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFDQSxzQkFBa0MsU0FBUyxDQUFDLENBQUE7QUFFL0Isc0JBQWMsR0FBWTtJQUNyQztRQUNFLElBQUksRUFBRSxxQkFBcUI7UUFDM0IsU0FBUyxFQUFFLHlCQUFpQjtLQUM3QjtDQUNGLENBQUMiLCJmaWxlIjoiYXBwLytxdWVzdGlvbi9xdWVzdGlvbi5yb3V0ZXMuanMiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBSb3V0ZSB9IGZyb20gJ0Bhbmd1bGFyL3JvdXRlcic7XG5pbXBvcnQgeyBRdWVzdGlvbkNvbXBvbmVudCB9IGZyb20gJy4vaW5kZXgnO1xuXG5leHBvcnQgY29uc3QgUXVlc3Rpb25Sb3V0ZXM6IFJvdXRlW10gPSBbXG4gIHtcbiAgICBwYXRoOiAncXVlc3Rpb25zLzpzaXRlLzppZCcsXG4gICAgY29tcG9uZW50OiBRdWVzdGlvbkNvbXBvbmVudFxuICB9XG5dO1xuIl19

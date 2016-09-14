@@ -1,0 +1,1 @@
+Stackexchange dapp based on mgechev's angular seed. Build and run dev with `npm install` then `npm start`.
