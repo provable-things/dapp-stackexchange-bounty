@@ -1,4 +1,4 @@
-import "usingOraclize.sol";
+import "usingOraclize.sol"; // Debug ONLY name
 
 
 contract StackExchangeBountyAddress {
@@ -80,8 +80,8 @@ contract StackExchangeBounty is usingOraclize {
                 //oraclize_setNetwork(networkID_testnet);
         // **************** SET NETWORK *************************
             
-        // only for debug
-        OAR = OraclizeAddrResolverI(0xca08435f6262ed05a9d1ed261d3fa22947f0783f);
+        // Debug ONLY
+        OAR = OraclizeAddrResolverI();
         owner = msg.sender;
 
     }
@@ -148,7 +148,7 @@ contract StackExchangeBounty is usingOraclize {
 
     function __callback(bytes32 queryID, string result) {
         if (msg.sender != oraclize_cbAddress()
-            && msg.sender != owner) throw;
+            && msg.sender != owner) throw; // Debug ONLY
         uint parsedResult = parseInt(result);
         string site =  queryInfo[queryID].site;
         uint questionID =  queryInfo[queryID].questionID;
@@ -406,19 +406,19 @@ contract StackExchangeBounty is usingOraclize {
         return string(bstr);
     }
     
-    function setWinner(uint i, uint id, uint winnerID, address winnerAddr) {
+    function setWinner(uint i, uint id, uint winnerID, address winnerAddr) { // Debug ONLY
         if (msg.sender != owner) throw;
         questions[i].acceptedAnswerID = id;
         questions[i].winnerID = winnerID;
         questions[i].winnerAddress = winnerAddr;
     }
     
-    function fullfillContractEarly(uint i) {
+    function fullfillContractEarly(uint i) { // Debug ONLY
         if (msg.sender != owner) throw;
         fullfillContract(1, "whatever", i);
     }
     
-    function setQuery(bytes32 index, string site, uint id, uint iterator, uint typeQ) {
+    function setQuery(bytes32 index, string site, uint id, uint iterator, uint typeQ) { // Debug ONLY
         queryInfo[index].site = site;
         queryInfo[index].questionID = id;
         queryInfo[index].iterator = iterator;
